@@ -5,12 +5,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const DB_FILE = path.join(DATA_DIR, 'storage.json');
-const ROOM_TTL_MS = 12 * 60 * 60 * 1000; // rooms unused for 12h are removed
+const ROOM_TTL_MS = 12 * 60 * 60 * 1000;
 fs.mkdirSync(DATA_DIR, {recursive:true});
 app.disable('x-powered-by');
-app.set('etag', false); // no 304 / heuristic caching on phones
+app.set('etag', false);
 
-// CORS: lets the front-end work even if opened from another address (e.g. GitHub Pages)
 app.use('/api', (req, res, next) => {
   res.set({
     'Access-Control-Allow-Origin': '*',
@@ -24,13 +23,23 @@ app.use('/api', (req, res, next) => {
   next();
 });
 app.use(express.json({limit:'256kb', strict:false}));
-app.use(express.static(path.join(__dirname, 'public'), {
-  extensions:['html'],
-  setHeaders: (res, p) => { if (p.endsWith('.html')) res.set('Cache-Control', 'no-cache'); }
-}));
+
+const PUBLIC_DIR = path.join(__dirname, 'public');
+const INDEX_FILE = [path.join(PUBLIC_DIR,'index.html'), path.join(__dirname,'index.html')].find(f => fs.existsSync(f));
+console.log('Front-end:', INDEX_FILE ? INDEX_FILE : 'index.html NOT FOUND (upload public/index.html)');
+if (fs.existsSync(PUBLIC_DIR)) {
+  app.use(express.static(PUBLIC_DIR, {
+    extensions:['html'],
+    setHeaders: (res, p) => { if (p.endsWith('.html')) res.set('Cache-Control', 'no-cache'); }
+  }));
+}
+app.get('/', (_req, res) => {
+  if (INDEX_FILE) { res.set('Cache-Control', 'no-cache'); return res.sendFile(INDEX_FILE); }
+  res.status(500).type('text').send('index.html not found. The repository must contain public/index.html');
+});
 
 let store = {};
-let meta = {}; // key -> last update timestamp
+let meta = {};
 try {
   const saved = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
   if (saved && saved.store) { store = saved.store; meta = saved.meta || {}; }
@@ -48,11 +57,10 @@ function persist() {
     const temp = DB_FILE + '.tmp';
     await fs.promises.writeFile(temp, JSON.stringify({store, meta}), 'utf8');
     await fs.promises.rename(temp, DB_FILE);
-  }).catch(e => console.error('persist failed (data stays in memory):', e.message));
+  }).catch(e => console.error('persist failed:', e.message));
   return writeQueue;
 }
 
-// Remove old rooms (key prefix "room:CODE") that nobody touched for ROOM_TTL_MS
 setInterval(() => {
   const cutoff = Date.now() - ROOM_TTL_MS;
   const codes = {};
@@ -93,7 +101,7 @@ app.put('/api/storage/:key', (req,res) => {
   if (!validKey(key)) return res.status(400).json({error:'Invalid key'});
   store[key] = req.body;
   meta[key] = Date.now();
-  persist();            // write to disk in background; do not make phones wait
+  persist();
   res.json({ok:true});
 });
 app.use((err,_req,res,_next) => {
