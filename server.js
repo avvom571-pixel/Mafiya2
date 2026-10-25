@@ -100,7 +100,7 @@ app.delete("/api/storage/:key", (req, res) => {
 
 app.use(express.static(publicDir));
 
-app.get("*", (req, res, next) => {
+app.get("/{*splat}", (req, res, next) =>  {
   if (req.path.startsWith("/api/")) {
     return res.status(404).json({ error: "API endpoint not found" });
   }
