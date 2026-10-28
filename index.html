@@ -272,6 +272,15 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
 .reveal-card .rr.detective{background:rgba(224,168,79,0.2); color:var(--amber);}
 .reveal-card .rr.civilian{background:rgba(255,255,255,0.08); color:var(--text-dim);}
 .reveal-card.dead{opacity:0.5;}
+.score-board{display:flex; flex-direction:column; gap:10px; margin:0 0 26px;}
+.score-row{display:grid; grid-template-columns:36px 1fr auto; gap:12px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; text-align:left;}
+.score-row.me{border-color:var(--amber);}
+.score-row .medal{font-size:22px; text-align:center; color:var(--text-dim); font-weight:700;}
+.score-row .sn{font-weight:700; font-size:15px; color:var(--paper);}
+.score-row .sw{font-size:12px; color:var(--text-dim); margin-top:3px; line-height:1.4;}
+.score-row .sp{text-align:right; line-height:1.2;}
+.score-row .sp b{display:block; font-size:20px; color:var(--amber);}
+.score-row .sp span{font-size:12px; color:var(--text-dim);}
 
 .toast{
   position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
@@ -487,6 +496,8 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
       <h1 id="end-title">—</h1>
       <p id="end-sub">—</p>
     </div>
+    <div class="section-title">🏆 Очки игроков</div>
+    <div class="score-board" id="score-board"></div>
     <div class="section-title">Все роли раскрыты</div>
     <div class="reveal-grid" id="reveal-grid"></div>
     <div class="lobby-actions">
@@ -661,7 +672,7 @@ function newRoom(code, hostId, hostName){
   return {
     code, hostId, gameId: 1, createdAt: now(),
     settings: {mafia:1, doctor:1, detective:1, discussionSec:90, voteSec:45, nightSec:45},
-    players: [{id:hostId, name:hostName, alive:true, role:null, checks:[], isHost:true}],
+    players: [{id:hostId, name:hostName, alive:true, role:null, checks:[], isHost:true, score:0, gain:0, why:[]}],
     phase:'lobby', round:0, phaseEndsAt:null, winner:null,
     log: [{type:'system', text:`Комната ${code} создана. Ведущий: ${hostName}.`, ts: now()}]
   };
@@ -803,7 +814,7 @@ document.getElementById('btn-start-game').addEventListener('click', async ()=>{
   for(let i=0;i<room.settings.doctor;i++) roles.push('doctor');
   shuffled.forEach((p,i)=>{
     p.role = roles[i] || 'civilian';
-    p.alive = true; p.checks = [];
+    p.alive = true; p.checks = []; p.gain = 0; p.why = [];
   });
   room.players = shuffled;
   room.phase = 'night';
@@ -833,7 +844,7 @@ function renderLobby(){
   grid.innerHTML = room.players.map(p=>`
     <div class="dossier">
       <div class="name">${p.isHost?'<span class="crown">👑</span>':''} ${esc(p.name)}</div>
-      <div class="tag">${p.id===App.me.id?'это вы':'в комнате'}</div>
+      <div class="tag">${p.id===App.me.id?'это вы':'в комнате'}${p.score?` · ⭐ ${p.score}`:''}</div>
     </div>
   `).join('');
   renderLobbySettings();
@@ -856,7 +867,7 @@ async function hostMergeJoins(room){
     if(room.players.find(p=>p.id===pid)) continue;
     const data = await sget(k);
     if(!data) continue;
-    room.players.push({id:pid, name:data.name, alive:true, role:null, checks:[], isHost:false});
+    room.players.push({id:pid, name:data.name, alive:true, role:null, checks:[], isHost:false, score:0, gain:0, why:[]});
     changed = true;
   }
   return changed;
@@ -885,9 +896,27 @@ function checkWinner(room){
   return null;
 }
 
+const POINTS = {win:10, survive:3, play:1, detective:2, doctor:3, mafiaKill:2, voteMafia:2};
+function addPts(room, pid, n, why){
+  const p = room.players.find(x=>x.id===pid);
+  if(!p) return;
+  p.gain = (p.gain||0) + n;
+  p.score = (p.score||0) + n;
+  (p.why = p.why || []).push(`+${n} ${why}`);
+}
+function awardEndPoints(room, winner){
+  room.players.forEach(p=>{
+    addPts(room, p.id, POINTS.play, 'участие');
+    const won = winner==='mafia' ? p.role==='mafia' : p.role!=='mafia';
+    if(won) addPts(room, p.id, POINTS.win, 'победа команды');
+    if(p.alive) addPts(room, p.id, POINTS.survive, 'дожил до конца');
+  });
+}
+
 function endGame(room, winner){
   room.winner = winner;
   room.phase = 'ended';
+  awardEndPoints(room, winner);
   const txt = winner==='town'
     ? '🏆 Мирные жители нашли всех преступников! Город побеждает.'
     : '🏆 Мафия захватила город. Мафия побеждает.';
@@ -923,6 +952,7 @@ async function hostResolveNight(room){
     const detP = room.players.find(p=>p.id===detectiveAlive.id);
     if(targetP && detP){
       detP.checks.push({round: room.round, targetName: targetP.name, isMafia: targetP.role==='mafia'});
+      if(targetP.role==='mafia') addPts(room, detP.id, POINTS.detective, 'нашёл мафию');
     }
   }
 
@@ -930,9 +960,11 @@ async function hostResolveNight(room){
     const victim = room.players.find(p=>p.id===mafiaTarget);
     if(victim){
       victim.alive = false;
+      mafiaAlive.forEach(m=>addPts(room, m.id, POINTS.mafiaKill, 'убийство ночью'));
       room.log.push({type:'death', text:`🌙 Ночь ${room.round}: этой ночью погиб(-ла) ${victim.name}. Его роль: ${ROLE_META[victim.role].name}.`, ts: now()});
     }
   } else {
+    if(doctorAlive && mafiaTarget && mafiaTarget!=='skip' && mafiaTarget===doctorSave) addPts(room, doctorAlive.id, POINTS.doctor, 'спас жителя');
     room.log.push({type:'system', text:`🌙 Ночь ${room.round}: этой ночью никто не погиб.`, ts: now()});
   }
 
@@ -964,6 +996,9 @@ async function hostResolveVote(room){
     const victim = room.players.find(p=>p.id===top[0]);
     if(victim){
       victim.alive = false;
+      if(victim.role==='mafia'){
+        room.players.forEach(v=>{ if(v.role!=='mafia' && actions[v.id]===victim.id) addPts(room, v.id, POINTS.voteMafia, 'голос против мафии'); });
+      }
       room.log.push({type:'death', text:`⚖️ День ${room.round}: город проголосовал против ${victim.name}. Его роль: ${ROLE_META[victim.role].name}.`, ts: now()});
     }
   } else {
@@ -1096,7 +1131,7 @@ function renderGame(){
   const rc = document.getElementById('role-card');
   rc.className = 'role-card ' + (me.role||'') + (me.alive?'':' dead-note');
   document.getElementById('role-icon').textContent = rm.icon;
-  document.getElementById('role-name').textContent = rm.name + (me.alive?'':' · выбыли');
+  document.getElementById('role-name').textContent = rm.name + (me.alive?'':' · выбыли') + ` · ⭐ ${me.gain||0}`;
   document.getElementById('role-desc').textContent = rm.desc;
 
   // checks (detective)
@@ -1306,6 +1341,14 @@ function renderEnd(){
       <div class="rr ${p.role}">${rm.name}</div>
     </div>`;
   }).join('');
+  const ranked = [...room.players].sort((a,b)=>((b.gain||0)-(a.gain||0)) || ((b.score||0)-(a.score||0)));
+  const medals = ['🥇','🥈','🥉'];
+  document.getElementById('score-board').innerHTML = ranked.map((p,i)=>`
+    <div class="score-row ${p.id===(App.me&&App.me.id)?'me':''}">
+      <div class="medal">${medals[i]||(i+1)}</div>
+      <div><div class="sn">${esc(p.name)}</div><div class="sw">${(p.why||[]).map(esc).join(' · ')}</div></div>
+      <div class="sp"><b>+${p.gain||0}</b><span>всего ${p.score||0}</span></div>
+    </div>`).join('');
   const again = document.getElementById('btn-play-again');
   again.style.display = App.isHost ? 'inline-flex' : 'none';
   again.onclick = async ()=>{
@@ -1315,7 +1358,7 @@ function renderEnd(){
     r.round = 0;
     r.winner = null;
     r.phaseEndsAt = null;
-    r.players.forEach(p=>{ p.alive=true; p.role=null; p.checks=[]; });
+    r.players.forEach(p=>{ p.alive=true; p.role=null; p.checks=[]; p.gain=0; p.why=[]; });
     r.log = [{type:'system', text:'🔁 Новая партия! Ведущий настраивает роли…', ts: now()}];
     await sset(chatKey(App.code), []);
     await sset(mchatKey(App.code), []);
