@@ -272,6 +272,49 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
 .reveal-card .rr.detective{background:rgba(224,168,79,0.2); color:var(--amber);}
 .reveal-card .rr.civilian{background:rgba(255,255,255,0.08); color:var(--text-dim);}
 .reveal-card.dead{opacity:0.5;}
+.home-profile{display:flex; align-items:center; gap:14px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; cursor:pointer; margin-top:26px;}
+.home-profile:hover{border-color:var(--amber);}
+.home-profile .av{font-size:34px; width:52px; height:52px; display:flex; align-items:center; justify-content:center; background:var(--bg2); border-radius:50%;}
+.home-profile .hp-name{font-weight:700; font-size:16px; color:var(--paper);}
+.home-profile .hp-sub{font-size:12px; color:var(--text-dim); margin-top:2px;}
+.home-profile .hp-pts{margin-left:auto; text-align:right; color:var(--amber); font-weight:700; font-size:20px; line-height:1.1;}
+.home-profile .hp-pts span{display:block; font-size:11px; color:var(--text-dim); font-weight:400;}
+.tabs{display:flex; gap:8px;}
+.tabs button{padding:10px 16px; border-radius:9px; border:1px solid var(--line); color:var(--text-dim); font-weight:700; font-size:13px; background:transparent;}
+.tabs button.on{background:var(--amber); color:#26190a; border-color:var(--amber);}
+.pf-hero{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; text-align:center;}
+.pf-av{font-size:56px; width:96px; height:96px; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; background:var(--bg2); border-radius:50%; border:2px solid var(--amber);}
+.pf-hero input[type=text]{text-align:center; font-size:18px; font-weight:700; margin:6px 0 10px; max-width:320px;}
+.pf-level{color:var(--amber); font-weight:700; letter-spacing:0.06em; text-transform:uppercase; font-size:13px;}
+.pf-bar{height:10px; background:var(--bg2); border-radius:99px; overflow:hidden; margin:12px auto 6px; max-width:420px;}
+.pf-bar i{display:block; height:100%; background:linear-gradient(90deg,var(--amber-dim),var(--amber)); border-radius:99px;}
+.pf-next{font-size:12px; color:var(--text-dim);}
+.av-pick{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:14px;}
+.av-pick button{font-size:24px; width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:var(--bg2);}
+.av-pick button.on{border-color:var(--amber); box-shadow:0 0 0 2px rgba(224,168,79,0.35);}
+.stat-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px;}
+.stat{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; text-align:center;}
+.stat b{display:block; font-size:24px; color:var(--paper);}
+.stat span{font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.08em;}
+.role-stat{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:8px;}
+.role-stat .rs-bar{height:8px; background:var(--bg2); border-radius:99px; overflow:hidden;}
+.role-stat .rs-bar i{display:block; height:100%; background:var(--green);}
+.role-stat small{color:var(--text-dim); font-size:12px;}
+.ach-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px;}
+.ach{background:var(--card); border:1px solid var(--amber-dim); border-radius:12px; padding:12px; text-align:center; font-size:13px;}
+.ach .ai{font-size:26px; display:block; margin-bottom:4px;}
+.ach.lock{opacity:0.35; border-color:var(--line); filter:grayscale(1);}
+.hist-row{display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin-bottom:8px; font-size:13px;}
+.hist-row.w{border-left:4px solid var(--green);} .hist-row.l{border-left:4px solid var(--red-bright);}
+.hist-row small{color:var(--text-dim); display:block;}
+.hist-row b{color:var(--amber);}
+.rk-row{display:grid; grid-template-columns:36px 44px 1fr auto; gap:10px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin-bottom:8px;}
+.rk-row.me{border-color:var(--amber);}
+.rk-row .rk-n{text-align:center; font-weight:700; color:var(--text-dim); font-size:18px;}
+.rk-row .rk-av{font-size:26px; text-align:center;}
+.rk-row .rk-name{font-weight:700; color:var(--paper);}
+.rk-row small{color:var(--text-dim); display:block; font-weight:400;}
+.rk-row .rk-pts{text-align:right; color:var(--amber); font-weight:700; font-size:18px;}
 .score-board{display:flex; flex-direction:column; gap:10px; margin:0 0 26px;}
 .score-row{display:grid; grid-template-columns:36px 1fr auto; gap:12px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; text-align:left;}
 .score-row.me{border-color:var(--amber);}
@@ -336,6 +379,11 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
   </div>
 
   <div class="wrap">
+    <div class="home-profile" id="home-profile" role="button" tabindex="0">
+      <div class="av" id="hp-av">🕵️</div>
+      <div><div class="hp-name" id="hp-name">Мой профиль</div><div class="hp-sub" id="hp-sub">Открыть профиль и рейтинг</div></div>
+      <div class="hp-pts" id="hp-pts">0<span>очков</span></div>
+    </div>
     <div class="panels">
       <div class="panel">
         <div class="eyebrow">Новая игра</div>
@@ -502,8 +550,24 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
     <div class="reveal-grid" id="reveal-grid"></div>
     <div class="lobby-actions">
       <button class="btn btn-primary" id="btn-play-again" style="display:none;">🔁 Играть снова</button>
+      <button class="btn btn-ghost" id="btn-end-profile">👤 Мой профиль</button>
       <button class="btn btn-ghost" id="btn-end-home">На главную</button>
     </div>
+  </div>
+</div>
+
+<!-- ================= PROFILE ================= -->
+<div class="screen" id="screen-profile">
+  <div class="wrap">
+    <div class="top-bar">
+      <button class="btn btn-ghost" id="btn-profile-back" style="width:auto;">← Назад</button>
+      <div class="tabs">
+        <button id="tab-profile" class="on">👤 Профиль</button>
+        <button id="tab-rating">🏆 Рейтинг</button>
+      </div>
+    </div>
+    <div id="profile-view"></div>
+    <div id="rating-view" style="display:none;"></div>
   </div>
 </div>
 
@@ -638,7 +702,9 @@ const App = {
   submittedThisPhase: false, // did *I* submit action for current gameId+round+phase
   chatCache: [],
   mafiaChatCache: [],
-  screen: 'home'
+  screen: 'home',
+  profile: null,
+  profileReturn: 'screen-home'
 };
 
 function showScreen(id){
@@ -657,6 +723,7 @@ async function ensureIdentity(){
 async function saveName(name){
   App.me.name = name;
   await pset('mafia-identity', App.me);
+  if(App.profile && App.profile.name !== name){ App.profile.name = name; saveProfile(App.profile); }
 }
 
 /* ================= room state helpers ================= */
@@ -774,6 +841,7 @@ document.getElementById('btn-copy-code').addEventListener('click', ()=>{
 document.getElementById('btn-leave-lobby').addEventListener('click', leaveToHome);
 document.getElementById('btn-leave-game').addEventListener('click', leaveToHome);
 document.getElementById('btn-end-home').addEventListener('click', leaveToHome);
+document.getElementById('btn-end-profile').addEventListener('click', ()=>openProfile());
 
 function leaveToHome(){
   stopPolling();
@@ -814,7 +882,7 @@ document.getElementById('btn-start-game').addEventListener('click', async ()=>{
   for(let i=0;i<room.settings.doctor;i++) roles.push('doctor');
   shuffled.forEach((p,i)=>{
     p.role = roles[i] || 'civilian';
-    p.alive = true; p.checks = []; p.gain = 0; p.why = [];
+    p.alive = true; p.checks = []; p.gain = 0; p.why = []; p.ev = {};
   });
   room.players = shuffled;
   room.phase = 'night';
@@ -897,12 +965,13 @@ function checkWinner(room){
 }
 
 const POINTS = {win:10, survive:3, play:1, detective:2, doctor:3, mafiaKill:2, voteMafia:2};
-function addPts(room, pid, n, why){
+function addPts(room, pid, n, why, evKey){
   const p = room.players.find(x=>x.id===pid);
   if(!p) return;
   p.gain = (p.gain||0) + n;
   p.score = (p.score||0) + n;
   (p.why = p.why || []).push(`+${n} ${why}`);
+  if(evKey){ p.ev = p.ev || {}; p.ev[evKey] = (p.ev[evKey]||0) + 1; }
 }
 function awardEndPoints(room, winner){
   room.players.forEach(p=>{
@@ -952,7 +1021,7 @@ async function hostResolveNight(room){
     const detP = room.players.find(p=>p.id===detectiveAlive.id);
     if(targetP && detP){
       detP.checks.push({round: room.round, targetName: targetP.name, isMafia: targetP.role==='mafia'});
-      if(targetP.role==='mafia') addPts(room, detP.id, POINTS.detective, 'нашёл мафию');
+      if(targetP.role==='mafia') addPts(room, detP.id, POINTS.detective, 'нашёл мафию', 'find');
     }
   }
 
@@ -960,11 +1029,11 @@ async function hostResolveNight(room){
     const victim = room.players.find(p=>p.id===mafiaTarget);
     if(victim){
       victim.alive = false;
-      mafiaAlive.forEach(m=>addPts(room, m.id, POINTS.mafiaKill, 'убийство ночью'));
+      mafiaAlive.forEach(m=>addPts(room, m.id, POINTS.mafiaKill, 'убийство ночью', 'kill'));
       room.log.push({type:'death', text:`🌙 Ночь ${room.round}: этой ночью погиб(-ла) ${victim.name}. Его роль: ${ROLE_META[victim.role].name}.`, ts: now()});
     }
   } else {
-    if(doctorAlive && mafiaTarget && mafiaTarget!=='skip' && mafiaTarget===doctorSave) addPts(room, doctorAlive.id, POINTS.doctor, 'спас жителя');
+    if(doctorAlive && mafiaTarget && mafiaTarget!=='skip' && mafiaTarget===doctorSave) addPts(room, doctorAlive.id, POINTS.doctor, 'спас жителя', 'save');
     room.log.push({type:'system', text:`🌙 Ночь ${room.round}: этой ночью никто не погиб.`, ts: now()});
   }
 
@@ -997,7 +1066,7 @@ async function hostResolveVote(room){
     if(victim){
       victim.alive = false;
       if(victim.role==='mafia'){
-        room.players.forEach(v=>{ if(v.role!=='mafia' && actions[v.id]===victim.id) addPts(room, v.id, POINTS.voteMafia, 'голос против мафии'); });
+        room.players.forEach(v=>{ if(v.role!=='mafia' && actions[v.id]===victim.id) addPts(room, v.id, POINTS.voteMafia, 'голос против мафии', 'voteMafia'); });
       }
       room.log.push({type:'death', text:`⚖️ День ${room.round}: город проголосовал против ${victim.name}. Его роль: ${ROLE_META[victim.role].name}.`, ts: now()});
     }
@@ -1328,6 +1397,7 @@ function enterEnd(){
 function renderEnd(){
   const room = App.room;
   if(!room) return;
+  recordGameToProfile(room);
   const banner = document.getElementById('end-banner');
   banner.className = 'end-banner ' + (room.winner==='town'?'town':'mafia');
   document.getElementById('end-title').textContent = room.winner==='town' ? 'ГОРОД ПОБЕДИЛ' : 'МАФИЯ ПОБЕДИЛА';
@@ -1358,7 +1428,7 @@ function renderEnd(){
     r.round = 0;
     r.winner = null;
     r.phaseEndsAt = null;
-    r.players.forEach(p=>{ p.alive=true; p.role=null; p.checks=[]; p.gain=0; p.why=[]; });
+    r.players.forEach(p=>{ p.alive=true; p.role=null; p.checks=[]; p.gain=0; p.why=[]; p.ev={}; });
     r.log = [{type:'system', text:'🔁 Новая партия! Ведущий настраивает роли…', ts: now()}];
     await sset(chatKey(App.code), []);
     await sset(mchatKey(App.code), []);
@@ -1368,9 +1438,216 @@ function renderEnd(){
   };
 }
 
+/* ================= player profile ================= */
+const AVATARS = ['🕵️','😎','🧔','👩','🦊','🐺','🦉','🐱','🦁','🧛','🤠','👑'];
+const LEVELS = [[0,'Новичок'],[25,'Свидетель'],[60,'Информатор'],[120,'Следователь'],[220,'Инспектор'],[380,'Комиссар'],[600,'Крёстный отец'],[1000,'Легенда города']];
+const ACHIEVEMENTS = [
+  {icon:'🎬', name:'Первая партия',        test:p=>p.games>=1},
+  {icon:'🏆', name:'Первая победа',        test:p=>p.wins>=1},
+  {icon:'🎲', name:'10 партий',            test:p=>p.games>=10},
+  {icon:'🥇', name:'5 побед',              test:p=>p.wins>=5},
+  {icon:'🔥', name:'3 победы подряд',      test:p=>p.bestStreak>=3},
+  {icon:'🎭', name:'Мафия: 3 победы',      test:p=>(p.roles.mafia||{}).w>=3},
+  {icon:'🔍', name:'Нашёл 5 мафиози',      test:p=>p.ev.find>=5},
+  {icon:'💉', name:'Спас 3 жителей',       test:p=>p.ev.save>=3},
+  {icon:'🛡️', name:'Выжил 5 раз',          test:p=>p.survived>=5},
+  {icon:'⭐', name:'100 очков',            test:p=>p.points>=100}
+];
+function newProfile(id, name){
+  return {id, name:name||'', avatar:'🕵️', created:now(), games:0, wins:0, losses:0, survived:0, points:0,
+    bestGame:0, streak:0, bestStreak:0,
+    roles:{mafia:{g:0,w:0}, detective:{g:0,w:0}, doctor:{g:0,w:0}, civilian:{g:0,w:0}},
+    ev:{find:0, save:0, kill:0, voteMafia:0}, history:[], recorded:[], updatedAt:now()};
+}
+function normProfile(raw, id, name){
+  const base = newProfile(id, name);
+  const p = Object.assign(base, raw || {});
+  p.id = id;
+  p.roles = Object.assign(newProfile(id).roles, (raw && raw.roles) || {});
+  p.ev = Object.assign(newProfile(id).ev, (raw && raw.ev) || {});
+  p.history = Array.isArray(p.history) ? p.history : [];
+  p.recorded = Array.isArray(p.recorded) ? p.recorded : [];
+  return p;
+}
+function profileKey(id){ return 'profile:' + id; }
+async function saveProfile(p){
+  p.updatedAt = now();
+  App.profile = p;
+  await pset('mafia-profile', p);          // saved on this phone (main storage)
+  renderHomeProfile();
+  sset(profileKey(p.id), p);               // backup on the server + used for the rating
+}
+async function loadProfile(){
+  const id = App.me.id;
+  const local = await pget('mafia-profile');
+  App.profile = normProfile(local, id, App.me.name);
+  renderHomeProfile();
+  // sync with server in background: keep whichever copy has more games / is newer
+  const remote = await sget(profileKey(id));
+  if(remote){
+    const r = normProfile(remote, id, App.me.name);
+    const better = (r.games > App.profile.games) || (r.games === App.profile.games && r.updatedAt > App.profile.updatedAt);
+    if(better){ App.profile = r; await pset('mafia-profile', r); renderHomeProfile(); }
+    else if(App.profile.games !== r.games || App.profile.updatedAt !== r.updatedAt){ sset(profileKey(id), App.profile); }
+  } else if(!sgetFailed && App.profile.games > 0){
+    sset(profileKey(id), App.profile);     // server lost its data: restore from phone
+  }
+}
+function levelInfo(points){
+  let i = 0;
+  for(let k=0;k<LEVELS.length;k++){ if(points >= LEVELS[k][0]) i = k; }
+  const cur = LEVELS[i], next = LEVELS[i+1] || null;
+  const pct = next ? Math.round((points-cur[0])/(next[0]-cur[0])*100) : 100;
+  return {name:cur[1], idx:i+1, next, pct};
+}
+function recordGameToProfile(room){
+  const p = App.profile;
+  if(!p || !room || room.phase !== 'ended') return;
+  const me = room.players.find(x=>x.id===App.me.id);
+  if(!me || !me.role) return;
+  const gk = room.code + ':' + room.gameId;
+  if(p.recorded.includes(gk)) return;
+  const won = room.winner==='mafia' ? me.role==='mafia' : me.role!=='mafia';
+  const gain = me.gain || 0;
+  p.games++; if(won) p.wins++; else p.losses++;
+  if(me.alive) p.survived++;
+  p.points += gain; p.bestGame = Math.max(p.bestGame, gain);
+  p.streak = won ? p.streak+1 : 0; p.bestStreak = Math.max(p.bestStreak, p.streak);
+  const r = p.roles[me.role] || (p.roles[me.role] = {g:0,w:0});
+  r.g++; if(won) r.w++;
+  const ev = me.ev || {};
+  ['find','save','kill','voteMafia'].forEach(k=>{ p.ev[k] = (p.ev[k]||0) + (ev[k]||0); });
+  p.history.unshift({ts:now(), code:room.code, role:me.role, won, gain, alive:!!me.alive});
+  p.history = p.history.slice(0,30);
+  p.recorded.unshift(gk); p.recorded = p.recorded.slice(0,60);
+  saveProfile(p);
+}
+function renderHomeProfile(){
+  const p = App.profile; if(!p) return;
+  const lv = levelInfo(p.points);
+  document.getElementById('hp-av').textContent = p.avatar;
+  document.getElementById('hp-name').textContent = p.name || App.me.name || 'Мой профиль';
+  document.getElementById('hp-sub').textContent = `${lv.name} · партий: ${p.games} · побед: ${p.wins}`;
+  document.getElementById('hp-pts').innerHTML = `${p.points}<span>очков</span>`;
+}
+function openProfile(){
+  App.profileReturn = App.screen === 'screen-profile' ? (App.profileReturn || 'screen-home') : App.screen;
+  showScreen('screen-profile');
+  switchProfileTab('profile');
+}
+function switchProfileTab(tab){
+  document.getElementById('tab-profile').classList.toggle('on', tab==='profile');
+  document.getElementById('tab-rating').classList.toggle('on', tab==='rating');
+  document.getElementById('profile-view').style.display = tab==='profile' ? 'block' : 'none';
+  document.getElementById('rating-view').style.display = tab==='rating' ? 'block' : 'none';
+  if(tab==='profile') renderProfile(); else renderRating();
+}
+function renderProfile(){
+  const p = App.profile; if(!p) return;
+  const lv = levelInfo(p.points);
+  const winRate = p.games ? Math.round(p.wins/p.games*100) : 0;
+  const roleRows = ['mafia','detective','doctor','civilian'].map(k=>{
+    const r = p.roles[k] || {g:0,w:0};
+    const pct = r.g ? Math.round(r.w/r.g*100) : 0;
+    const m = ROLE_META[k];
+    return `<div class="role-stat"><div>${m.icon} <b>${m.name}</b></div>
+      <div class="rs-bar"><i style="width:${pct}%"></i></div>
+      <small>${r.g} партий · ${r.w} побед (${pct}%)</small></div>`;
+  }).join('');
+  const ach = ACHIEVEMENTS.map(a=>{
+    const ok = a.test(p);
+    return `<div class="ach ${ok?'':'lock'}"><span class="ai">${a.icon}</span>${a.name}</div>`;
+  }).join('');
+  const hist = p.history.length ? p.history.map(h=>{
+    const m = ROLE_META[h.role] || {name:h.role, icon:''};
+    const d = new Date(h.ts);
+    const dt = d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'}) + ' ' + d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+    return `<div class="hist-row ${h.won?'w':'l'}"><div>${m.icon}</div>
+      <div><b style="color:var(--paper)">${h.won?'Победа':'Поражение'}</b> · ${m.name}${h.alive?' · выжил':''}<small>${dt} · комната ${esc(h.code)}</small></div>
+      <b>+${h.gain}</b></div>`;
+  }).join('') : '<div class="pf-next" style="padding:10px 0;">Пока нет сыгранных партий. Сыграйте первую — результат появится здесь.</div>';
+  document.getElementById('profile-view').innerHTML = `
+    <div class="pf-hero">
+      <div class="pf-av">${p.avatar}</div>
+      <input type="text" id="prof-name" maxlength="18" value="${esc(p.name)}" placeholder="Ваше имя">
+      <div class="pf-level">Уровень ${lv.idx} · ${lv.name}</div>
+      <div class="pf-bar"><i style="width:${lv.pct}%"></i></div>
+      <div class="pf-next">${lv.next ? `Ещё ${lv.next[0]-p.points} очков до уровня «${lv.next[1]}»` : 'Максимальный уровень достигнут!'}</div>
+      <div class="av-pick">${AVATARS.map(a=>`<button data-av="${a}" class="${a===p.avatar?'on':''}">${a}</button>`).join('')}</div>
+    </div>
+    <div class="section-title">Статистика</div>
+    <div class="stat-grid">
+      <div class="stat"><b>${p.points}</b><span>всего очков</span></div>
+      <div class="stat"><b>${p.games}</b><span>партий</span></div>
+      <div class="stat"><b>${p.wins}</b><span>побед</span></div>
+      <div class="stat"><b>${winRate}%</b><span>винрейт</span></div>
+      <div class="stat"><b>${p.survived}</b><span>дожил до конца</span></div>
+      <div class="stat"><b>${p.bestGame}</b><span>рекорд за партию</span></div>
+      <div class="stat"><b>${p.streak}</b><span>побед подряд</span></div>
+      <div class="stat"><b>${p.bestStreak}</b><span>лучшая серия</span></div>
+    </div>
+    <div class="section-title">Способности</div>
+    <div class="stat-grid">
+      <div class="stat"><b>${p.ev.find}</b><span>🔍 нашёл мафию</span></div>
+      <div class="stat"><b>${p.ev.save}</b><span>💉 спас жителей</span></div>
+      <div class="stat"><b>${p.ev.kill}</b><span>🔪 убийств (мафия)</span></div>
+      <div class="stat"><b>${p.ev.voteMafia}</b><span>⚖️ голос против мафии</span></div>
+    </div>
+    <div class="section-title">По ролям</div>
+    ${roleRows}
+    <div class="section-title">Достижения (${ACHIEVEMENTS.filter(a=>a.test(p)).length}/${ACHIEVEMENTS.length})</div>
+    <div class="ach-grid">${ach}</div>
+    <div class="section-title">История партий</div>
+    ${hist}
+    <div class="pf-next" style="margin-top:16px; text-align:center;">Профиль хранится на этом телефоне и копируется на сервер. Если очистить данные браузера, профиль на этом устройстве начнётся заново.</div>`;
+  const nameEl = document.getElementById('prof-name');
+  nameEl.addEventListener('change', async ()=>{
+    const v = nameEl.value.trim().slice(0,18);
+    if(!v){ nameEl.value = App.profile.name; return; }
+    App.profile.name = v;
+    await saveName(v);
+    await saveProfile(App.profile);
+    toast('Имя сохранено');
+  });
+  document.querySelectorAll('#profile-view .av-pick button').forEach(b=>{
+    b.addEventListener('click', async ()=>{
+      App.profile.avatar = b.dataset.av;
+      await saveProfile(App.profile);
+      renderProfile();
+    });
+  });
+}
+async function renderRating(){
+  const box = document.getElementById('rating-view');
+  box.innerHTML = '<div class="pf-next" style="padding:20px; text-align:center;"><span class="spinner"></span> Загружаем рейтинг…</div>';
+  if(App.profile && App.profile.games > 0) await sset(profileKey(App.me.id), App.profile);
+  const keys = (await slist('profile:')).slice(0, 80);
+  const all = (await Promise.all(keys.map(k=>sget(k)))).filter(x=>x && typeof x.points==='number');
+  if(!all.length){
+    box.innerHTML = '<div class="pf-next" style="padding:20px; text-align:center;">Рейтинг пока пуст. Сыграйте партию — и вы появитесь в списке.</div>';
+    return;
+  }
+  all.sort((a,b)=>(b.points-a.points) || ((b.wins||0)-(a.wins||0)) || ((a.games||0)-(b.games||0)));
+  const medals = ['🥇','🥈','🥉'];
+  const myIdx = all.findIndex(x=>x.id===App.me.id);
+  box.innerHTML = `<div class="section-title">Лучшие игроки${myIdx>=0?` · вы на ${myIdx+1}-м месте`:''}</div>` +
+    all.slice(0,30).map((x,i)=>`
+      <div class="rk-row ${x.id===App.me.id?'me':''}">
+        <div class="rk-n">${medals[i]||(i+1)}</div>
+        <div class="rk-av">${esc(x.avatar||'🕵️')}</div>
+        <div><div class="rk-name">${esc(x.name||'Игрок')}</div><small>${levelInfo(x.points).name} · партий ${x.games||0} · побед ${x.wins||0}</small></div>
+        <div class="rk-pts">${x.points}</div>
+      </div>`).join('');
+}
+document.getElementById('home-profile').addEventListener('click', ()=>openProfile());
+document.getElementById('btn-profile-back').addEventListener('click', ()=>{ showScreen(App.profileReturn || 'screen-home'); });
+document.getElementById('tab-profile').addEventListener('click', ()=>switchProfileTab('profile'));
+document.getElementById('tab-rating').addEventListener('click', ()=>switchProfileTab('rating'));
+
 /* ================= boot ================= */
 (async function boot(){
   await ensureIdentity();
+  await loadProfile();
   if(App.me.name){
     document.getElementById('create-name').value = App.me.name;
     document.getElementById('join-name').value = App.me.name;
