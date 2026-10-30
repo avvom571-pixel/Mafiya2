@@ -272,6 +272,9 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
 .reveal-card .rr.detective{background:rgba(224,168,79,0.2); color:var(--amber);}
 .reveal-card .rr.civilian{background:rgba(255,255,255,0.08); color:var(--text-dim);}
 .reveal-card.dead{opacity:0.5;}
+.bots-panel{margin-top:22px;}
+.dossier.bot{border-style:dashed;}
+.bot-note{font-size:12px; color:var(--text-dim); text-align:center; margin-top:4px;}
 .home-profile{display:flex; align-items:center; gap:14px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; cursor:pointer; margin-top:26px;}
 .home-profile:hover{border-color:var(--amber);}
 .home-profile .av{font-size:34px; width:52px; height:52px; display:flex; align-items:center; justify-content:center; background:var(--bg2); border-radius:50%;}
@@ -408,6 +411,19 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
       </div>
     </div>
 
+    <div class="panel bots-panel">
+      <div class="eyebrow">Один на один с городом</div>
+      <h2>🤖 Играть с ботами</h2>
+      <p class="desc">Нет друзей под рукой? Сыграйте в одиночку: боты получат роли, будут ходить ночью, обсуждать и голосовать. Очки в профиль за такую игру засчитываются на 50%.</p>
+      <label for="bots-name">Ваше имя</label>
+      <input type="text" id="bots-name" maxlength="18" placeholder="Например, Виктор">
+      <label>Сколько ботов</label>
+      <div class="stepper" style="margin-bottom:6px;"><button type="button" id="bots-minus">−</button><span class="val" id="bots-count">6</span><button type="button" id="bots-plus">+</button></div>
+      <div class="pf-next" id="bots-roles-hint" style="margin:8px 0 4px;"></div>
+      <div class="error-msg" id="bots-error"></div>
+      <button class="btn btn-primary" id="btn-bots">🤖 Играть с ботами</button>
+    </div>
+
     <div class="rules-toggle"><a id="rules-link">Как играть в Мафию?</a></div>
     <div class="rules-box" id="rules-box">
       <h3>Мафия</h3>
@@ -444,6 +460,10 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
 
     <div id="lobby-host-controls">
       <div class="settings-box">
+        <div class="setting-row">
+          <div class="lbl">Боты 🤖<small>Добавьте ботов, если игроков не хватает</small></div>
+          <div class="stepper"><button type="button" id="lobby-bot-minus">−</button><span class="val" id="set-bots">0</span><button type="button" id="lobby-bot-plus">+</button></div>
+        </div>
         <div class="setting-row">
           <div class="lbl">Мафия<small>Знают друг друга, выбирают жертву ночью</small></div>
           <div class="stepper"><button data-set="mafia" data-d="-1">−</button><span class="val" id="set-mafia">1</span><button data-set="mafia" data-d="1">+</button></div>
@@ -707,11 +727,31 @@ const App = {
   profileReturn: 'screen-home'
 };
 
+let navFromPop = false;
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   App.screen = id;
+  window.scrollTo(0,0);
+  if(navFromPop) return;
+  // browser history, so the phone's Back button works inside the app
+  try{
+    if(id==='screen-home') history.replaceState({screen:id}, '');
+    else if(!(history.state && history.state.screen===id)) history.pushState({screen:id}, '');
+  }catch(_){}
 }
+window.addEventListener('popstate', ()=>{
+  const cur = App.screen;
+  if(cur==='screen-profile'){
+    navFromPop = true;
+    showScreen(App.profileReturn && App.profileReturn!=='screen-profile' ? App.profileReturn : 'screen-home');
+    navFromPop = false;
+  } else if(cur==='screen-lobby' || cur==='screen-game' || cur==='screen-end'){
+    // do not leave a game by accident
+    try{ history.pushState({screen:cur}, ''); }catch(_){}
+    toast('Чтобы выйти из комнаты, нажмите кнопку «Выйти»');
+  }
+});
 
 /* ================= identity ================= */
 async function ensureIdentity(){
@@ -845,6 +885,7 @@ document.getElementById('btn-end-profile').addEventListener('click', ()=>openPro
 
 function leaveToHome(){
   stopPolling();
+  App.botMem = null; App.botPlan = null;
   App.code = null; App.room = null; App.isHost = false;
   document.getElementById('create-error').textContent='';
   document.getElementById('join-error').textContent='';
@@ -867,7 +908,7 @@ document.querySelectorAll('.stepper button[data-set]').forEach(btn=>{
   });
 });
 
-document.getElementById('btn-start-game').addEventListener('click', async ()=>{
+async function startGame(){
   if(!App.isHost || !App.room) return;
   const room = App.room;
   const n = room.players.length;
@@ -891,10 +932,12 @@ document.getElementById('btn-start-game').addEventListener('click', async ()=>{
   room.log = [{type:'system', text:'🌙 Город засыпает. Наступает первая ночь…', ts: now()}];
   await sset(chatKey(App.code), []);
   await sset(mchatKey(App.code), []);
+  App.botMem = {};
   await sset(roomKey(App.code), room);
   App.room = room;
   enterGame();
-});
+}
+document.getElementById('btn-start-game').addEventListener('click', startGame);
 
 function renderLobbySettings(){
   const s = App.room.settings;
@@ -903,6 +946,7 @@ function renderLobbySettings(){
   document.getElementById('set-doctor').textContent = s.doctor;
   document.getElementById('set-discussionSec').textContent = s.discussionSec;
   document.getElementById('set-voteSec').textContent = s.voteSec;
+  document.getElementById('set-bots').textContent = App.room.players.filter(p=>p.isBot).length;
 }
 
 function renderLobby(){
@@ -910,9 +954,9 @@ function renderLobby(){
   document.getElementById('lobby-count').textContent = room.players.length;
   const grid = document.getElementById('lobby-players');
   grid.innerHTML = room.players.map(p=>`
-    <div class="dossier">
+    <div class="dossier ${p.isBot?'bot':''}">
       <div class="name">${p.isHost?'<span class="crown">👑</span>':''} ${esc(p.name)}</div>
-      <div class="tag">${p.id===App.me.id?'это вы':'в комнате'}${p.score?` · ⭐ ${p.score}`:''}</div>
+      <div class="tag">${p.isBot?'бот':(p.id===App.me.id?'это вы':'в комнате')}${p.score?` · ⭐ ${p.score}`:''}</div>
     </div>
   `).join('');
   renderLobbySettings();
@@ -1092,6 +1136,9 @@ async function hostTick(){
   try{
     let room = App.room;
     let changed = false;
+    if(room.players.some(p=>p.isBot) && (room.phase==='night' || room.phase==='day-discuss' || room.phase==='day-vote')){
+      try{ await botTick(room); }catch(e){ console.error('bot error', e); }
+    }
     if(room.phase==='lobby'){
       changed = await hostMergeJoins(room) || changed;
     } else if(room.phase==='night'){
@@ -1419,6 +1466,7 @@ function renderEnd(){
       <div><div class="sn">${esc(p.name)}</div><div class="sw">${(p.why||[]).map(esc).join(' · ')}</div></div>
       <div class="sp"><b>+${p.gain||0}</b><span>всего ${p.score||0}</span></div>
     </div>`).join('');
+  if(room.players.some(x=>x.isBot)) document.getElementById('score-board').insertAdjacentHTML('beforeend','<div class="bot-note">🤖 Игра с ботами: в профиль засчитывается 50% очков.</div>');
   const again = document.getElementById('btn-play-again');
   again.style.display = App.isHost ? 'inline-flex' : 'none';
   again.onclick = async ()=>{
@@ -1437,6 +1485,193 @@ function renderEnd(){
     enterLobby();
   };
 }
+
+/* ================= bots ================= */
+const BOT_NAMES = ['Алекс','Борис','Влад','Грета','Дина','Эмиль','Жанна','Зарина','Игорь','Карим','Лола','Марат','Нина','Олег','Тимур','Ясмин'];
+function makeBot(room){
+  const used = room.players.map(p=>p.name);
+  const free = BOT_NAMES.filter(n=>!used.includes('🤖 '+n));
+  const base = free.length ? free[Math.floor(Math.random()*free.length)] : ('Бот'+(room.players.length+1));
+  return {id:'bot-'+uid(), name:'🤖 '+base, alive:true, role:null, checks:[], isHost:false, isBot:true, score:0, gain:0, why:[], ev:{}};
+}
+async function lobbyBots(delta){
+  if(!App.isHost || !App.room || App.room.phase!=='lobby') return;
+  const room = App.room;
+  const bots = room.players.filter(p=>p.isBot);
+  if(delta>0){
+    if(room.players.length >= 12){ toast('Максимум 12 игроков.'); return; }
+    room.players.push(makeBot(room));
+  } else if(bots.length){
+    const last = bots[bots.length-1];
+    room.players = room.players.filter(p=>p.id!==last.id);
+  }
+  await sset(roomKey(App.code), room);
+  renderLobby();
+}
+document.getElementById('lobby-bot-plus').addEventListener('click', ()=>lobbyBots(1));
+document.getElementById('lobby-bot-minus').addEventListener('click', ()=>lobbyBots(-1));
+
+function rnd(a,b){ return a + Math.random()*(b-a); }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function botMemFor(room){
+  App.botMem = App.botMem || {};
+  const k = room.gameId+':'+room.round;
+  return App.botMem[k] || (App.botMem[k] = {sus:{}, mafiaNight:null, mafiaVote:null});
+}
+function botKnownMafia(room, bot){
+  // detective bot: a checked player who is mafia and still alive
+  const hit = (bot.checks||[]).find(c=>c.isMafia && room.players.find(p=>p.name===c.targetName && p.alive));
+  return hit ? room.players.find(p=>p.name===hit.targetName && p.alive) : null;
+}
+function botNightTarget(room, bot, mem){
+  const alive = room.players.filter(p=>p.alive);
+  if(bot.role==='mafia'){
+    if(!mem.mafiaNight || !room.players.find(p=>p.id===mem.mafiaNight && p.alive)){
+      const t = alive.filter(p=>p.role!=='mafia');
+      mem.mafiaNight = t.length ? pick(t).id : 'skip';
+    }
+    return mem.mafiaNight;
+  }
+  if(bot.role==='doctor'){
+    return pick(alive).id;
+  }
+  if(bot.role==='detective'){
+    const checked = (bot.checks||[]).map(c=>c.targetName);
+    const cand = alive.filter(p=>p.id!==bot.id && !checked.includes(p.name));
+    return cand.length ? pick(cand).id : 'skip';
+  }
+  return null;
+}
+function botSuspect(room, bot, mem){
+  if(mem.sus[bot.id]) {
+    const cur = room.players.find(p=>p.id===mem.sus[bot.id] && p.alive);
+    if(cur) return cur;
+  }
+  const alive = room.players.filter(p=>p.alive && p.id!==bot.id);
+  let t = null;
+  if(bot.role==='detective') t = botKnownMafia(room, bot);
+  if(!t && bot.role==='mafia'){
+    const non = alive.filter(p=>p.role!=='mafia');
+    if(!mem.mafiaVote || !non.find(p=>p.id===mem.mafiaVote)) mem.mafiaVote = non.length ? pick(non).id : null;
+    t = non.find(p=>p.id===mem.mafiaVote) || null;
+  }
+  if(!t && alive.length) t = pick(alive);
+  mem.sus[bot.id] = t ? t.id : null;
+  return t;
+}
+function botVoteTarget(room, bot, mem){
+  const t = botSuspect(room, bot, mem);
+  if(!t) return 'skip';
+  if(bot.role==='civilian' || bot.role==='doctor'){
+    if(Math.random() < 0.08) return 'skip';
+    if(Math.random() > 0.65){
+      const others = room.players.filter(p=>p.alive && p.id!==bot.id);
+      if(others.length) return pick(others).id;
+    }
+  }
+  return t.id;
+}
+function botChatLine(room, bot, mem){
+  const t = botSuspect(room, bot, mem);
+  const tn = t ? t.name : 'кого-то';
+  const accuse = [
+    `Мне кажется, ${tn} ведёт себя подозрительно.`,
+    `Я бы проголосовал против ${tn}.`,
+    `${tn}, почему так тихо? Что скрываешь?`,
+    `Подозреваю ${tn}. Слишком гладко всё у него.`
+  ];
+  const neutral = [
+    'Давайте не будем спешить с выводами.',
+    'Кто-нибудь заметил что-то странное этой ночью?',
+    'Нужно слушать друг друга внимательно.',
+    'Я пока не уверен, но кое-кто мне не нравится.'
+  ];
+  if(bot.role==='detective' && botKnownMafia(room, bot)) return `Я точно знаю: ${tn} из мафии! Голосуем против него!`;
+  return Math.random()<0.7 ? pick(accuse) : pick(neutral);
+}
+async function botTick(room){
+  const phase = room.phase;
+  const key = room.gameId+':'+room.round+':'+phase;
+  const aliveBots = room.players.filter(p=>p.alive && p.isBot);
+  if(!aliveBots.length) return;
+  if(!App.botPlan || App.botPlan.key!==key){
+    const left = Math.max(3000, (room.phaseEndsAt||now()) - now());
+    const cap = Math.min(left*0.7, phase==='night' ? 12000 : (phase==='day-vote' ? 14000 : 40000));
+    const due = {}, chatDue = {};
+    aliveBots.forEach(b=>{
+      due[b.id] = now() + rnd(1500, Math.max(2500, cap));
+      chatDue[b.id] = now() + rnd(2000, Math.max(4000, cap));
+    });
+    App.botPlan = {key, due, chatDue, done:{}, chatDone:{}};
+  }
+  const plan = App.botPlan;
+  const mem = botMemFor(room);
+  if(phase==='night' || phase==='day-vote'){
+    const aPhase = phase==='night' ? 'night' : 'vote';
+    for(const b of aliveBots){
+      if(plan.done[b.id] || now() < plan.due[b.id]) continue;
+      let target = phase==='night' ? botNightTarget(room, b, mem) : botVoteTarget(room, b, mem);
+      plan.done[b.id] = true;
+      if(!target) continue;
+      await sset(actKey(App.code, room.gameId, room.round, aPhase, b.id), {target});
+    }
+  } else if(phase==='day-discuss'){
+    for(const b of aliveBots){
+      if(plan.chatDone[b.id] || now() < plan.chatDue[b.id]) continue;
+      plan.chatDone[b.id] = true;
+      if(Math.random() < 0.15) continue; // sometimes stay silent
+      const arr = (await sget(chatKey(App.code))) || [];
+      arr.push({id:b.id, name:b.name, text:botChatLine(room, b, mem), ts: now()});
+      await sset(chatKey(App.code), arr);
+    }
+  }
+}
+
+/* ===== separate "play with bots" section on the home screen ===== */
+let soloBots = 6;
+function renderSoloBots(){
+  const n = soloBots + 1;
+  const s = defaultSettingsFor(n);
+  document.getElementById('bots-count').textContent = soloBots;
+  document.getElementById('bots-roles-hint').textContent =
+    `Всего игроков: ${n}. Мафия: ${s.mafia}${s.detective?', комиссар: 1':''}${s.doctor?', врач: 1':''}. Ваша роль выдаётся случайно.`;
+}
+document.getElementById('bots-minus').addEventListener('click', ()=>{ soloBots = Math.max(3, soloBots-1); renderSoloBots(); });
+document.getElementById('bots-plus').addEventListener('click', ()=>{ soloBots = Math.min(11, soloBots+1); renderSoloBots(); });
+renderSoloBots();
+document.getElementById('btn-bots').addEventListener('click', async ()=>{
+  const nameEl = document.getElementById('bots-name');
+  const errEl = document.getElementById('bots-error');
+  const name = nameEl.value.trim();
+  errEl.textContent = '';
+  if(!name){ errEl.textContent = 'Введите имя.'; return; }
+  const btn = document.getElementById('btn-bots');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Готовим игру…';
+  try{
+    await saveName(name);
+    let code, exists = true, tries = 0;
+    do{
+      code = roomCode();
+      exists = await sget(roomKey(code));
+      if(!exists && sgetFailed) throw new Error('Нет связи с сервером. Подождите 30–60 секунд (сервер просыпается) и попробуйте снова.');
+      tries++;
+    }while(exists && tries<8);
+    if(exists) throw new Error('Не удалось подобрать код комнаты. Попробуйте ещё раз.');
+    const room = newRoom(code, App.me.id, name);
+    room.solo = true;
+    for(let i=0;i<soloBots;i++) room.players.push(makeBot(room));
+    room.settings = Object.assign(defaultSettingsFor(room.players.length), {discussionSec:60, voteSec:30, nightSec:30});
+    room.log = [{type:'system', text:`Игра с ботами. Игроков: ${room.players.length}.`, ts: now()}];
+    const saved = await sset(roomKey(code), room);
+    if(!saved) throw new Error('Не удалось сохранить комнату на сервере.');
+    App.code = code; App.isHost = true; App.room = room;
+    await startGame();
+  }catch(e){
+    errEl.textContent = 'Ошибка: ' + (e && e.message ? e.message : 'не удалось начать игру');
+  }finally{
+    btn.disabled = false; btn.innerHTML = '🤖 Играть с ботами';
+  }
+});
 
 /* ================= player profile ================= */
 const AVATARS = ['🕵️','😎','🧔','👩','🦊','🐺','🦉','🐱','🦁','🧛','🤠','👑'];
@@ -1508,7 +1743,8 @@ function recordGameToProfile(room){
   const gk = room.code + ':' + room.gameId;
   if(p.recorded.includes(gk)) return;
   const won = room.winner==='mafia' ? me.role==='mafia' : me.role!=='mafia';
-  const gain = me.gain || 0;
+  const hasBots = room.players.some(x=>x.isBot);
+  const gain = hasBots ? Math.round((me.gain||0)/2) : (me.gain || 0);
   p.games++; if(won) p.wins++; else p.losses++;
   if(me.alive) p.survived++;
   p.points += gain; p.bestGame = Math.max(p.bestGame, gain);
@@ -1517,7 +1753,7 @@ function recordGameToProfile(room){
   r.g++; if(won) r.w++;
   const ev = me.ev || {};
   ['find','save','kill','voteMafia'].forEach(k=>{ p.ev[k] = (p.ev[k]||0) + (ev[k]||0); });
-  p.history.unshift({ts:now(), code:room.code, role:me.role, won, gain, alive:!!me.alive});
+  p.history.unshift({ts:now(), code:room.code, role:me.role, won, gain, alive:!!me.alive, bots:hasBots});
   p.history = p.history.slice(0,30);
   p.recorded.unshift(gk); p.recorded = p.recorded.slice(0,60);
   saveProfile(p);
@@ -1563,7 +1799,7 @@ function renderProfile(){
     const d = new Date(h.ts);
     const dt = d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'}) + ' ' + d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
     return `<div class="hist-row ${h.won?'w':'l'}"><div>${m.icon}</div>
-      <div><b style="color:var(--paper)">${h.won?'Победа':'Поражение'}</b> · ${m.name}${h.alive?' · выжил':''}<small>${dt} · комната ${esc(h.code)}</small></div>
+      <div><b style="color:var(--paper)">${h.won?'Победа':'Поражение'}</b> · ${m.name}${h.alive?' · выжил':''}<small>${dt} · ${h.bots?'🤖 с ботами':'комната '+esc(h.code)}</small></div>
       <b>+${h.gain}</b></div>`;
   }).join('') : '<div class="pf-next" style="padding:10px 0;">Пока нет сыгранных партий. Сыграйте первую — результат появится здесь.</div>';
   document.getElementById('profile-view').innerHTML = `
@@ -1640,7 +1876,10 @@ async function renderRating(){
       </div>`).join('');
 }
 document.getElementById('home-profile').addEventListener('click', ()=>openProfile());
-document.getElementById('btn-profile-back').addEventListener('click', ()=>{ showScreen(App.profileReturn || 'screen-home'); });
+document.getElementById('btn-profile-back').addEventListener('click', ()=>{
+  if(history.state && history.state.screen==='screen-profile') history.back();   // popstate handler returns to the previous screen
+  else showScreen(App.profileReturn && App.profileReturn!=='screen-profile' ? App.profileReturn : 'screen-home');
+});
 document.getElementById('tab-profile').addEventListener('click', ()=>switchProfileTab('profile'));
 document.getElementById('tab-rating').addEventListener('click', ()=>switchProfileTab('rating'));
 
@@ -1651,6 +1890,7 @@ document.getElementById('tab-rating').addEventListener('click', ()=>switchProfil
   if(App.me.name){
     document.getElementById('create-name').value = App.me.name;
     document.getElementById('join-name').value = App.me.name;
+    document.getElementById('bots-name').value = App.me.name;
   }
 })();
 
