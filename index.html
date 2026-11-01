@@ -1202,7 +1202,6 @@ async function pollTick(){
   } else if(App.screen==='screen-game'){
     if(room.phase==='ended'){ enterEnd(); }
     else{
-      if(phaseChanged){ App.selectedTarget=null; App.submittedThisPhase=false; }
       renderGame();
       await refreshChat();
     }
@@ -1225,6 +1224,7 @@ function renderTimerAndCountdowns(){
 /* ================= game screen ================= */
 function enterGame(){
   showScreen('screen-game');
+  App.phaseKey = null;
   App.selectedTarget = null;
   App.submittedThisPhase = false;
   startPolling();
@@ -1239,10 +1239,14 @@ function phaseLabel(room){
   return {icon:'🏁', name:'Игра окончена', sub:''};
 }
 
+function phaseKeyOf(room){ return room.gameId+':'+room.round+':'+room.phase; }
 function renderGame(){
   const room = App.room;
   const me = myPlayer();
   if(!me){ return; }
+  // New phase/round -> forget the previous choice. Works for the host too (the host's own tick updates App.room before polling).
+  const pk = phaseKeyOf(room);
+  if(App.phaseKey !== pk){ App.phaseKey = pk; App.selectedTarget = null; App.submittedThisPhase = false; }
 
   const pl = phaseLabel(room);
   document.getElementById('phase-icon').textContent = pl.icon;
@@ -1379,14 +1383,19 @@ function nameOf(room, id){
 async function submitNightAction(){
   if(!App.selectedTarget) return;
   const room = App.room;
+  const pk = phaseKeyOf(room);
   await sset(actKey(App.code, room.gameId, room.round, 'night', App.me.id), {target: App.selectedTarget});
+  if(App.phaseKey !== pk) return;   // the phase already changed while sending
   App.submittedThisPhase = true;
   renderActionPanel(room, myPlayer());
   renderPlayers(room, myPlayer());
 }
 async function submitVoteAction(){
   const room = App.room;
+  if(!App.selectedTarget) return;
+  const pk = phaseKeyOf(room);
   await sset(actKey(App.code, room.gameId, room.round, 'vote', App.me.id), {target: App.selectedTarget});
+  if(App.phaseKey !== pk) return;   // the phase already changed while sending
   App.submittedThisPhase = true;
   renderActionPanel(room, myPlayer());
   renderPlayers(room, myPlayer());
