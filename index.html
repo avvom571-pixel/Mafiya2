@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>НОЧНОЙ ГОРОД — Мафия онлайн</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0c11">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Мафия">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
@@ -424,6 +432,7 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
       <button class="btn btn-primary" id="btn-bots">🤖 Играть с ботами</button>
     </div>
 
+    <button class="btn btn-ghost" id="btn-install" style="display:none; margin-top:18px;">📲 Установить приложение на телефон</button>
     <div class="rules-toggle"><a id="rules-link">Как играть в Мафию?</a></div>
     <div class="rules-box" id="rules-box">
       <h3>Мафия</h3>
@@ -1895,6 +1904,23 @@ document.getElementById('tab-rating').addEventListener('click', ()=>switchProfil
 })();
 
 })();
+</script>
+<script>
+// PWA: installable app
+if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }); }
+let deferredInstall = null;
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault(); deferredInstall = e;
+  const b = document.getElementById('btn-install'); if(b) b.style.display = 'block';
+});
+window.addEventListener('appinstalled', ()=>{ const b = document.getElementById('btn-install'); if(b) b.style.display='none'; deferredInstall=null; });
+document.getElementById('btn-install').addEventListener('click', async ()=>{
+  if(!deferredInstall) return;
+  deferredInstall.prompt();
+  await deferredInstall.userChoice;
+  deferredInstall = null;
+  document.getElementById('btn-install').style.display = 'none';
+});
 </script>
 </body>
 </html>
