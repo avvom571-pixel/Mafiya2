@@ -31,7 +31,10 @@ console.log('Front-end:', INDEX_FILE ? INDEX_FILE : 'index.html NOT FOUND (uploa
 if (fs.existsSync(PUBLIC_DIR)) {
   app.use(express.static(PUBLIC_DIR, {
     extensions:['html'],
-    setHeaders: (res, p) => { if (p.endsWith('.html')) res.set('Cache-Control', 'no-cache'); }
+    setHeaders: (res, p) => {
+      if (p.endsWith('.html') || p.endsWith('sw.js') || p.endsWith('manifest.json')) res.set('Cache-Control', 'no-cache');
+      if (p.endsWith('manifest.json')) res.type('application/manifest+json');
+    }
   }));
 }
 app.get('/', (_req, res) => {
