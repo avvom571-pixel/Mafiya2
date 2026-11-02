@@ -281,6 +281,65 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
 .reveal-card .rr.civilian{background:rgba(255,255,255,0.08); color:var(--text-dim);}
 .reveal-card.dead{opacity:0.5;}
 .bots-panel{margin-top:22px;}
+/* phase animation */
+#phase-fx{position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none; opacity:0; z-index:90;}
+#phase-fx.show{animation:fxPop 2.1s ease forwards;}
+#phase-fx .fx-icon{font-size:100px; line-height:1;}
+#phase-fx .fx-text{font-size:26px; letter-spacing:0.22em; text-transform:uppercase; color:var(--paper); font-weight:800; margin-top:14px; text-align:center;}
+#phase-fx.night{background:radial-gradient(circle at 50% 40%, rgba(30,42,100,0.88), rgba(5,6,12,0.96));}
+#phase-fx.day{background:radial-gradient(circle at 50% 40%, rgba(240,190,90,0.78), rgba(22,16,8,0.94));}
+#phase-fx.vote{background:radial-gradient(circle at 50% 40%, rgba(226,59,76,0.6), rgba(10,12,17,0.95));}
+#phase-fx.show .fx-icon{animation:fxIcon 1.3s ease-out both;}
+@keyframes fxPop{0%{opacity:0} 14%{opacity:1} 70%{opacity:1} 100%{opacity:0}}
+@keyframes fxIcon{0%{transform:scale(0.35) rotate(-25deg)} 35%{transform:scale(1.18) rotate(4deg)} 100%{transform:scale(1) rotate(0)}}
+@keyframes floaty{0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)}}
+.phase-chip .icon{animation:floaty 3.2s ease-in-out infinite;}
+#screen-game{transition:background 1.2s ease;}
+#screen-game[data-phase="night"]{background:
+  radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,0.55), transparent 60%),
+  radial-gradient(1.5px 1.5px at 38% 8%, rgba(255,255,255,0.45), transparent 60%),
+  radial-gradient(1.5px 1.5px at 66% 14%, rgba(255,255,255,0.5), transparent 60%),
+  radial-gradient(1.5px 1.5px at 86% 26%, rgba(255,255,255,0.4), transparent 60%),
+  radial-gradient(1.5px 1.5px at 24% 34%, rgba(255,255,255,0.35), transparent 60%),
+  linear-gradient(180deg,#070a1c 0%, var(--bg) 55%);}
+#screen-game[data-phase="day-discuss"]{background:linear-gradient(180deg,#2c2312 0%, var(--bg) 55%);}
+#screen-game[data-phase="day-vote"]{background:linear-gradient(180deg,#2c1218 0%, var(--bg) 55%);}
+@media (prefers-reduced-motion: reduce){ #phase-fx.show{animation:none; opacity:0;} .phase-chip .icon{animation:none;} }
+/* presets, quick chat */
+.preset-row{display:flex; flex-wrap:wrap; gap:8px;}
+.preset-row .btn{width:auto; flex:1; min-width:96px;}
+.toggle-btn{min-width:74px; padding:10px 14px; border-radius:9px; border:1px solid var(--line); background:var(--bg2); color:var(--text-dim); font-weight:700;}
+.toggle-btn.on{background:var(--amber); color:#26190a; border-color:var(--amber);}
+.quick-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+.quick-row button{padding:7px 10px; border-radius:99px; border:1px solid var(--line); background:var(--bg2); color:var(--paper); font-size:12px;}
+.quick-row button.em{font-size:18px; padding:4px 10px;}
+.quick-row button:active{background:var(--card-hi);}
+.tour-box{background:var(--card); border:1px solid var(--amber-dim); border-radius:14px; padding:14px 16px; margin-bottom:20px; text-align:center;}
+.tour-box h3{margin:0 0 6px; color:var(--amber); font-size:16px;}
+.tour-box .champ{font-size:20px; font-weight:800; color:var(--paper); margin:6px 0;}
+.tour-row{display:flex; justify-content:space-between; font-size:13px; padding:4px 0; color:var(--text-dim); border-top:1px solid var(--line);}
+.tour-row b{color:var(--paper);}
+.sub-tabs{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;}
+.sub-tabs button{padding:8px 12px; border-radius:99px; border:1px solid var(--line); background:transparent; color:var(--text-dim); font-size:12px; font-weight:700;}
+.sub-tabs button.on{background:var(--amber); color:#26190a; border-color:var(--amber);}
+.friend-box{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:12px; font-size:13px; color:var(--text-dim);}
+.friend-box .fc{font-family:'JetBrains Mono',monospace; letter-spacing:0.2em; color:var(--amber); font-weight:700; font-size:18px;}
+.friend-box .row{display:flex; gap:8px; margin-top:8px;}
+.friend-box input{flex:1; margin:0;}
+.friend-box .btn{width:auto;}
+.rk-row .rm{color:var(--text-dim); background:none; border:none; font-size:16px; padding:0 4px;}
+details.hist{margin-bottom:8px;}
+details.hist summary{list-style:none; cursor:pointer; margin:0;}
+details.hist summary::-webkit-details-marker{display:none;}
+.hist-more{background:var(--card); border:1px solid var(--line); border-top:none; border-radius:0 0 12px 12px; padding:10px 14px; font-size:12px; color:var(--text-dim); line-height:1.6; margin-top:-6px;}
+.hist-more .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+.hist-more .chip{padding:3px 8px; border-radius:99px; background:var(--bg2); border:1px solid var(--line); color:var(--paper);}
+.hist-more .chip.mafia{border-color:var(--red-bright);}
+.hist-more .chip.me{border-color:var(--amber);}
+.hist-more .chip.dead{opacity:0.5; text-decoration:line-through;}
+.insight{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px;}
+.insight .stat{text-align:left;}
+.insight .stat b{font-size:16px;}
 .dossier.bot{border-style:dashed;}
 .bot-note{font-size:12px; color:var(--text-dim); text-align:center; margin-top:4px;}
 .home-profile{display:flex; align-items:center; gap:14px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; cursor:pointer; margin-top:26px;}
@@ -469,6 +528,22 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
 
     <div id="lobby-host-controls">
       <div class="settings-box">
+        <div class="setting-row" style="display:block;">
+          <div class="lbl" style="margin-bottom:8px;">Готовые режимы<small>Выберите один и при желании поправьте вручную</small></div>
+          <div class="preset-row">
+            <button class="btn btn-ghost btn-sm" data-preset="fast">⚡ Быстрая</button>
+            <button class="btn btn-ghost btn-sm" data-preset="classic">🎩 Классика</button>
+            <button class="btn btn-ghost btn-sm" data-preset="hard">🔥 Жёсткая</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="lbl">Ведущий не играет 🎙️<small>Вы только управляете игрой и видите все роли</small></div>
+          <button type="button" class="toggle-btn" id="btn-mod-toggle">выкл</button>
+        </div>
+        <div class="setting-row">
+          <div class="lbl">Турнир 🏅<small>Число партий подряд; очки суммируются, в конце — чемпион</small></div>
+          <div class="stepper"><button data-set="tournament" data-d="-2">−</button><span class="val" id="set-tournament">выкл</span><button data-set="tournament" data-d="2">+</button></div>
+        </div>
         <div class="setting-row">
           <div class="lbl">Боты 🤖<small>Добавьте ботов, если игроков не хватает</small></div>
           <div class="stepper"><button type="button" id="lobby-bot-minus">−</button><span class="val" id="set-bots">0</span><button type="button" id="lobby-bot-plus">+</button></div>
@@ -558,6 +633,7 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
             <input type="text" id="chat-input" maxlength="200" placeholder="Написать сообщение…">
             <button id="btn-chat-send">➤</button>
           </div>
+          <div class="quick-row" id="quick-row"></div>
           <div class="chat-disabled-note" id="chat-disabled-note" style="display:none;"></div>
         </div>
       </div>
@@ -573,6 +649,7 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
       <h1 id="end-title">—</h1>
       <p id="end-sub">—</p>
     </div>
+    <div id="tour-box"></div>
     <div class="section-title">🏆 Очки игроков</div>
     <div class="score-board" id="score-board"></div>
     <div class="section-title">Все роли раскрыты</div>
@@ -600,6 +677,7 @@ input[type=text].code-input{text-transform:uppercase; letter-spacing:0.3em; font
   </div>
 </div>
 
+<div id="phase-fx"><div class="fx-icon" id="fx-icon">🌙</div><div class="fx-text" id="fx-text"></div></div>
 <div class="toast" id="toast"></div>
 
 
@@ -715,6 +793,7 @@ const ROLE_META = {
   mafia:      {name:'Мафия', icon:'🔪', desc:'Каждую ночь ваша команда выбирает жертву среди мирных жителей. Не выдавайте себя днём.'},
   detective:  {name:'Комиссар', icon:'🔎', desc:'Каждую ночь проверяйте одного игрока — узнаете, состоит ли он в мафии.'},
   doctor:     {name:'Врач', icon:'💉', desc:'Каждую ночь можете спасти одного игрока (в том числе себя) от гибели.'},
+  observer:   {name:'Ведущий', icon:'🎙️', desc:'Вы не играете: видите все роли и управляете ходом партии.'},
   civilian:   {name:'Мирный житель', icon:'🧑', desc:'Особых способностей нет. Внимательно слушайте и голосуйте с умом днём.'}
 };
 
@@ -910,6 +989,7 @@ document.querySelectorAll('.stepper button[data-set]').forEach(btn=>{
     let v = (s[key]||0) + delta;
     if(key==='mafia') v = Math.max(1, Math.min(v, Math.max(1, Math.floor(App.room.players.length/2))));
     else if(key==='detective' || key==='doctor') v = Math.max(0, Math.min(v, 2));
+    else if(key==='tournament') v = Math.max(1, Math.min(v, 9));
     else if(key==='discussionSec' || key==='voteSec') v = Math.max(15, Math.min(v, 240));
     s[key] = v;
     await sset(roomKey(App.code), App.room);
@@ -920,11 +1000,15 @@ document.querySelectorAll('.stepper button[data-set]').forEach(btn=>{
 async function startGame(){
   if(!App.isHost || !App.room) return;
   const room = App.room;
-  const n = room.players.length;
+  const modMode = !!room.settings.modMode;
+  const pool = room.players.filter(p=>!(modMode && p.id===room.hostId));
+  const n = pool.length;
   if(n < 2){ toast('Нужно минимум 2 игрока.'); return; }
   const totalSpecial = room.settings.mafia + room.settings.detective + room.settings.doctor;
   if(totalSpecial >= n){ toast('Слишком много особых ролей для такого числа игроков.'); return; }
-  const shuffled = [...room.players].sort(()=>Math.random()-0.5);
+  if(modMode){ const h = room.players.find(p=>p.id===room.hostId); room.mod = {id:h.id, name:h.name, score:h.score||0}; }
+  else room.mod = null;
+  const shuffled = [...pool].sort(()=>Math.random()-0.5);
   let idx = 0;
   const roles = [];
   for(let i=0;i<room.settings.mafia;i++) roles.push('mafia');
@@ -956,7 +1040,37 @@ function renderLobbySettings(){
   document.getElementById('set-discussionSec').textContent = s.discussionSec;
   document.getElementById('set-voteSec').textContent = s.voteSec;
   document.getElementById('set-bots').textContent = App.room.players.filter(p=>p.isBot).length;
+  const T = s.tournament || 1;
+  document.getElementById('set-tournament').textContent = T>1 ? T : 'выкл';
+  const mt = document.getElementById('btn-mod-toggle');
+  mt.textContent = s.modMode ? 'вкл' : 'выкл';
+  mt.classList.toggle('on', !!s.modMode);
 }
+function playingCount(room){ return room.players.length - ((room.settings.modMode) ? 1 : 0); }
+document.getElementById('btn-mod-toggle').addEventListener('click', async ()=>{
+  if(!App.isHost || !App.room) return;
+  App.room.settings.modMode = !App.room.settings.modMode;
+  await sset(roomKey(App.code), App.room);
+  renderLobby();
+});
+document.querySelectorAll('[data-preset]').forEach(b=>{
+  b.addEventListener('click', async ()=>{
+    if(!App.isHost || !App.room) return;
+    const room = App.room, n = Math.max(2, playingCount(room));
+    const base = defaultSettingsFor(n);
+    const keep = {modMode:room.settings.modMode, tournament:room.settings.tournament};
+    let st;
+    if(b.dataset.preset==='fast') st = Object.assign({}, base, {nightSec:20, discussionSec:45, voteSec:20});
+    else if(b.dataset.preset==='hard'){
+      st = Object.assign({}, base, {mafia: Math.max(1, Math.min(Math.floor(n/2)-0, Math.ceil(n/3))), doctor:0, detective: n>=6?1:0, nightSec:30, discussionSec:60, voteSec:30});
+      if(st.mafia >= n/2 && n>2) st.mafia = Math.max(1, Math.floor((n-1)/2));
+    } else st = Object.assign({}, base, {nightSec:45, discussionSec:90, voteSec:45});
+    room.settings = Object.assign(st, keep);
+    await sset(roomKey(App.code), room);
+    renderLobby();
+    toast('Режим применён');
+  });
+});
 
 function renderLobby(){
   const room = App.room;
@@ -969,13 +1083,13 @@ function renderLobby(){
     </div>
   `).join('');
   renderLobbySettings();
-  const n = room.players.length;
+  const n = playingCount(room);
   const total = room.settings.mafia+room.settings.detective+room.settings.doctor;
   const startBtn = document.getElementById('btn-start-game');
   const hint = document.getElementById('lobby-hint');
   if(n<2){ startBtn.disabled = true; hint.textContent = `Нужно минимум 2 игрока (сейчас ${n}).`; }
   else if(total>=n){ startBtn.disabled = true; hint.textContent = 'Слишком много особых ролей — уменьшите их число.'; }
-  else{ startBtn.disabled = false; hint.textContent = `Готово к запуску: ${n} игроков, ${room.settings.mafia} мафии.`; }
+  else{ startBtn.disabled = false; hint.textContent = `Готово к запуску: ${n} игроков, ${room.settings.mafia} мафии.${room.settings.modMode?' Ведущий не играет.':''}`; }
 }
 
 /* ================= host: merge joins ================= */
@@ -1039,6 +1153,13 @@ function endGame(room, winner){
   room.winner = winner;
   room.phase = 'ended';
   awardEndPoints(room, winner);
+  const T = (room.settings && room.settings.tournament) || 1;
+  if(T > 1){
+    room.tour = room.tour || {total:T, played:0, scores:{}, names:{}};
+    room.tour.total = T;
+    room.tour.played++;
+    room.players.forEach(p=>{ room.tour.scores[p.id] = (room.tour.scores[p.id]||0) + (p.gain||0); room.tour.names[p.id] = p.name; });
+  }
   const txt = winner==='town'
     ? '🏆 Мирные жители нашли всех преступников! Город побеждает.'
     : '🏆 Мафия захватила город. Мафия побеждает.';
@@ -1230,7 +1351,13 @@ function enterGame(){
   startPolling();
 }
 
-function myPlayer(){ return App.room ? App.room.players.find(p=>p.id===App.me.id) : null; }
+function myPlayer(){
+  if(!App.room) return null;
+  if(App.room.mod && App.room.mod.id===App.me.id){
+    return {id:App.me.id, name:App.me.name, alive:false, role:'observer', isMod:true, checks:[], gain:0};
+  }
+  return App.room.players.find(p=>p.id===App.me.id) || null;
+}
 
 function phaseLabel(room){
   if(room.phase==='night') return {icon:'🌙', name:`Ночь ${room.round}`, sub:'город спит'};
@@ -1246,9 +1373,12 @@ function renderGame(){
   if(!me){ return; }
   // New phase/round -> forget the previous choice. Works for the host too (the host's own tick updates App.room before polling).
   const pk = phaseKeyOf(room);
-  if(App.phaseKey !== pk){ App.phaseKey = pk; App.selectedTarget = null; App.submittedThisPhase = false; }
+  const phaseIsNew = App.phaseKey !== pk;
+  if(phaseIsNew){ App.phaseKey = pk; App.selectedTarget = null; App.submittedThisPhase = false; }
+  document.getElementById('screen-game').dataset.phase = room.phase;
 
   const pl = phaseLabel(room);
+  if(phaseIsNew) showPhaseFx(room, pl);
   document.getElementById('phase-icon').textContent = pl.icon;
   document.getElementById('phase-name').textContent = pl.name;
   document.getElementById('phase-sub').textContent = pl.sub;
@@ -1258,9 +1388,9 @@ function renderGame(){
   // role card
   const rm = ROLE_META[me.role] || {name:'—', icon:'❔', desc:'—'};
   const rc = document.getElementById('role-card');
-  rc.className = 'role-card ' + (me.role||'') + (me.alive?'':' dead-note');
+  rc.className = 'role-card ' + (me.role||'') + ((me.alive||me.isMod)?'':' dead-note');
   document.getElementById('role-icon').textContent = rm.icon;
-  document.getElementById('role-name').textContent = rm.name + (me.alive?'':' · выбыли') + ` · ⭐ ${me.gain||0}`;
+  document.getElementById('role-name').textContent = me.isMod ? rm.name : (rm.name + (me.alive?'':' · выбыли') + ` · ⭐ ${me.gain||0}`);
   document.getElementById('role-desc').textContent = rm.desc;
 
   // checks (detective)
@@ -1311,6 +1441,7 @@ function renderPlayers(room, me){
     return `<div class="${cls.join(' ')}" data-pid="${p.id}" ${clickable?'tabindex="0" role="button"':''}>
       <div class="name">${p.isHost?'<span class="crown">👑</span>':''} ${esc(p.name)}</div>
       ${p.id===me.id?'<div class="my-badge">это вы</div>':''}
+      ${me.isMod?`<div class="my-badge">${(ROLE_META[p.role]||{}).icon||''} ${(ROLE_META[p.role]||{}).name||''}</div>`:''}
     </div>`;
   }).join('');
 
@@ -1323,8 +1454,30 @@ function renderPlayers(room, me){
   });
 }
 
+function showPhaseFx(room, pl){
+  try{
+    if(document.hidden || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    const fx = document.getElementById('phase-fx');
+    fx.className = room.phase==='night' ? 'night' : (room.phase==='day-vote' ? 'vote' : 'day');
+    document.getElementById('fx-icon').textContent = pl.icon;
+    document.getElementById('fx-text').textContent = pl.name + (pl.sub ? ' · ' + pl.sub : '');
+    void fx.offsetWidth;
+    fx.classList.add('show');
+    clearTimeout(showPhaseFx._h);
+    showPhaseFx._h = setTimeout(()=>fx.classList.remove('show'), 2200);
+  }catch(_){}
+}
+
 function renderActionPanel(room, me){
   const panel = document.getElementById('action-panel');
+  if(me.isMod){
+    panel.innerHTML = `<div class="ap-title">🎙️ Вы ведущий</div><div class="ap-hint">Вы не играете. Роли игроков показаны на карточках ниже. Можно ускорить партию.</div>
+      <button class="btn btn-ghost btn-sm" id="btn-mod-skip" style="margin-top:10px;width:auto;">⏭ Завершить текущую фазу сейчас</button>`;
+    document.getElementById('btn-mod-skip').addEventListener('click', async ()=>{
+      const r2 = App.room; r2.phaseEndsAt = now(); await sset(roomKey(App.code), r2); toast('Фаза завершается…');
+    });
+    return;
+  }
   if(!me.alive){
     panel.innerHTML = `<div class="ap-title">Вы выбыли</div><div class="ap-hint">Вы можете наблюдать за игрой и читать чат, но больше не участвуете в голосованиях и ночных действиях.</div>`;
     return;
@@ -1412,11 +1565,12 @@ function renderLog(room){
 function renderChatVisibility(room, me){
   const inputRow = document.getElementById('chat-input-row');
   const note = document.getElementById('chat-disabled-note');
-  const canChat = me.alive && (room.phase==='day-discuss' || room.phase==='day-vote' || room.phase==='lobby');
+  const canChat = (me.alive || me.isMod) && (room.phase==='day-discuss' || room.phase==='day-vote' || room.phase==='lobby');
+  const quick = document.getElementById('quick-row');
   if(canChat){
-    inputRow.style.display='flex'; note.style.display='none';
+    inputRow.style.display='flex'; note.style.display='none'; quick.style.display='flex';
   } else {
-    inputRow.style.display='none'; note.style.display='block';
+    inputRow.style.display='none'; quick.style.display='none'; note.style.display='block';
     note.textContent = !me.alive ? 'Вы выбыли и можете только наблюдать за чатом.' : 'Чат открыт днём, во время обсуждения.';
   }
 }
@@ -1437,11 +1591,22 @@ function renderChat(arr){
 
 document.getElementById('btn-chat-send').addEventListener('click', sendChat);
 document.getElementById('chat-input').addEventListener('keydown', e=>{ if(e.key==='Enter') sendChat(); });
+const QUICK_EMOJI = ['👍','😂','😱','🤔','🔪','🙏'];
+const QUICK_PHRASES = ['Подозрительно!','Я мирный!','Согласен','Не согласен','Голосуем!','Кто следующий?'];
+(function buildQuickRow(){
+  const q = document.getElementById('quick-row');
+  q.innerHTML = QUICK_EMOJI.map(e=>`<button class="em" data-q="${e}">${e}</button>`).join('') + QUICK_PHRASES.map(t=>`<button data-q="${t}">${t}</button>`).join('');
+  q.querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>sendChatText(b.dataset.q)));
+})();
 async function sendChat(){
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
-  if(!text || !App.code) return;
+  if(!text) return;
   input.value='';
+  await sendChatText(text);
+}
+async function sendChatText(text){
+  if(!text || !App.code) return;
   const arr = (await sget(chatKey(App.code))) || [];
   arr.push({id: App.me.id, name: App.me.name, text, ts: now()});
   await sset(chatKey(App.code), arr);
@@ -1485,8 +1650,20 @@ function renderEnd(){
       <div class="sp"><b>+${p.gain||0}</b><span>всего ${p.score||0}</span></div>
     </div>`).join('');
   if(room.players.some(x=>x.isBot)) document.getElementById('score-board').insertAdjacentHTML('beforeend','<div class="bot-note">🤖 Игра с ботами: в профиль засчитывается 50% очков.</div>');
+  // tournament standings
+  const tb = document.getElementById('tour-box');
+  const tour = room.tour;
+  if(tour && tour.total > 1){
+    const done = tour.played >= tour.total;
+    const list = Object.entries(tour.scores).sort((a,b)=>b[1]-a[1]);
+    const champ = list[0];
+    tb.innerHTML = `<div class="tour-box"><h3>🏅 Турнир: партия ${Math.min(tour.played,tour.total)} из ${tour.total}</h3>
+      ${done && champ ? `<div class="champ">🏆 Чемпион: ${esc(tour.names[champ[0]]||'?')} — ${champ[1]} очк.</div>` : ''}
+      ${list.slice(0,10).map(([id,pts],i)=>`<div class="tour-row"><span>${i+1}. ${esc(tour.names[id]||'?')}</span><b>${pts}</b></div>`).join('')}</div>`;
+  } else tb.innerHTML = '';
   const again = document.getElementById('btn-play-again');
   again.style.display = App.isHost ? 'inline-flex' : 'none';
+  again.textContent = (tour && tour.total>1 && tour.played<tour.total) ? `▶ Следующая партия (${tour.played+1}/${tour.total})` : (tour && tour.total>1 ? '🔁 Новый турнир' : '🔁 Играть снова');
   again.onclick = async ()=>{
     const r = App.room;
     r.gameId += 1;
@@ -1494,6 +1671,11 @@ function renderEnd(){
     r.round = 0;
     r.winner = null;
     r.phaseEndsAt = null;
+    if(r.mod){ // moderator returns to the player list for the lobby
+      r.players.unshift({id:r.mod.id, name:r.mod.name, alive:true, role:null, checks:[], isHost:true, score:r.mod.score||0, gain:0, why:[], ev:{}});
+      r.mod = null;
+    }
+    if(r.tour && (r.tour.played >= r.tour.total || !((r.settings.tournament||1) > 1))) r.tour = null;
     r.players.forEach(p=>{ p.alive=true; p.role=null; p.checks=[]; p.gain=0; p.why=[]; p.ev={}; });
     r.log = [{type:'system', text:'🔁 Новая партия! Ведущий настраивает роли…', ts: now()}];
     await sset(chatKey(App.code), []);
@@ -1693,22 +1875,44 @@ document.getElementById('btn-bots').addEventListener('click', async ()=>{
 
 /* ================= player profile ================= */
 const AVATARS = ['🕵️','😎','🧔','👩','🦊','🐺','🦉','🐱','🦁','🧛','🤠','👑'];
-const LEVELS = [[0,'Новичок'],[25,'Свидетель'],[60,'Информатор'],[120,'Следователь'],[220,'Инспектор'],[380,'Комиссар'],[600,'Крёстный отец'],[1000,'Легенда города']];
+const LEVELS = [[0,'Новичок'],[25,'Свидетель'],[60,'Информатор'],[120,'Следователь'],[220,'Инспектор'],[380,'Комиссар'],[600,'Крёстный отец'],[1000,'Легенда города'],[1500,'Хозяин ночи'],[2200,'Призрак города'],[3200,'Бессмертный']];
 const ACHIEVEMENTS = [
   {icon:'🎬', name:'Первая партия',        test:p=>p.games>=1},
-  {icon:'🏆', name:'Первая победа',        test:p=>p.wins>=1},
   {icon:'🎲', name:'10 партий',            test:p=>p.games>=10},
+  {icon:'🎰', name:'25 партий',            test:p=>p.games>=25},
+  {icon:'🏛️', name:'50 партий',            test:p=>p.games>=50},
+  {icon:'🏆', name:'Первая победа',        test:p=>p.wins>=1},
   {icon:'🥇', name:'5 побед',              test:p=>p.wins>=5},
+  {icon:'🥈', name:'15 побед',             test:p=>p.wins>=15},
+  {icon:'🥉', name:'30 побед',             test:p=>p.wins>=30},
   {icon:'🔥', name:'3 победы подряд',      test:p=>p.bestStreak>=3},
+  {icon:'⚡', name:'5 побед подряд',       test:p=>p.bestStreak>=5},
   {icon:'🎭', name:'Мафия: 3 победы',      test:p=>(p.roles.mafia||{}).w>=3},
+  {icon:'😈', name:'Мафия: 10 побед',      test:p=>(p.roles.mafia||{}).w>=10},
+  {icon:'🔎', name:'Комиссар: 3 победы',   test:p=>(p.roles.detective||{}).w>=3},
+  {icon:'⚕️', name:'Врач: 3 победы',       test:p=>(p.roles.doctor||{}).w>=3},
+  {icon:'🧑', name:'Мирный: 5 побед',      test:p=>(p.roles.civilian||{}).w>=5},
   {icon:'🔍', name:'Нашёл 5 мафиози',      test:p=>p.ev.find>=5},
+  {icon:'🕶️', name:'Нашёл 20 мафиози',     test:p=>p.ev.find>=20},
   {icon:'💉', name:'Спас 3 жителей',       test:p=>p.ev.save>=3},
+  {icon:'🩺', name:'Спас 10 жителей',      test:p=>p.ev.save>=10},
+  {icon:'🔪', name:'10 убийств мафии',     test:p=>p.ev.kill>=10},
+  {icon:'⚖️', name:'5 верных голосов',     test:p=>p.ev.voteMafia>=5},
+  {icon:'🗳️', name:'15 верных голосов',    test:p=>p.ev.voteMafia>=15},
   {icon:'🛡️', name:'Выжил 5 раз',          test:p=>p.survived>=5},
-  {icon:'⭐', name:'100 очков',            test:p=>p.points>=100}
+  {icon:'🧟', name:'Выжил 20 раз',         test:p=>p.survived>=20},
+  {icon:'⭐', name:'100 очков',            test:p=>p.points>=100},
+  {icon:'🌟', name:'300 очков',            test:p=>p.points>=300},
+  {icon:'💫', name:'1000 очков',           test:p=>p.points>=1000},
+  {icon:'💥', name:'Рекорд 25+ за партию', test:p=>p.bestGame>=25},
+  {icon:'🤖', name:'5 партий с ботами',    test:p=>(p.botGames||0)>=5},
+  {icon:'🎓', name:'Сыграл все 4 роли',    test:p=>['mafia','detective','doctor','civilian'].every(k=>(p.roles[k]||{}).g>=1)},
+  {icon:'🏅', name:'Чемпион турнира',      test:p=>(p.tourWins||0)>=1},
+  {icon:'🤝', name:'3 друга в рейтинге',   test:p=>(p.friends||[]).length>=3}
 ];
 function newProfile(id, name){
   return {id, name:name||'', avatar:'🕵️', created:now(), games:0, wins:0, losses:0, survived:0, points:0,
-    bestGame:0, streak:0, bestStreak:0,
+    bestGame:0, streak:0, bestStreak:0, botGames:0, tourWins:0, friends:[], playedWith:{},
     roles:{mafia:{g:0,w:0}, detective:{g:0,w:0}, doctor:{g:0,w:0}, civilian:{g:0,w:0}},
     ev:{find:0, save:0, kill:0, voteMafia:0}, history:[], recorded:[], updatedAt:now()};
 }
@@ -1720,8 +1924,11 @@ function normProfile(raw, id, name){
   p.ev = Object.assign(newProfile(id).ev, (raw && raw.ev) || {});
   p.history = Array.isArray(p.history) ? p.history : [];
   p.recorded = Array.isArray(p.recorded) ? p.recorded : [];
+  p.friends = Array.isArray(p.friends) ? p.friends : [];
+  p.playedWith = (p.playedWith && typeof p.playedWith==='object') ? p.playedWith : {};
   return p;
 }
+function friendCode(id){ return String(id||'').replace(/[^a-z0-9]/gi,'').slice(1,7).toUpperCase(); }
 function profileKey(id){ return 'profile:' + id; }
 async function saveProfile(p){
   p.updatedAt = now();
@@ -1735,7 +1942,6 @@ async function loadProfile(){
   const local = await pget('mafia-profile');
   App.profile = normProfile(local, id, App.me.name);
   renderHomeProfile();
-  // sync with server in background: keep whichever copy has more games / is newer
   const remote = await sget(profileKey(id));
   if(remote){
     const r = normProfile(remote, id, App.me.name);
@@ -1743,7 +1949,7 @@ async function loadProfile(){
     if(better){ App.profile = r; await pset('mafia-profile', r); renderHomeProfile(); }
     else if(App.profile.games !== r.games || App.profile.updatedAt !== r.updatedAt){ sset(profileKey(id), App.profile); }
   } else if(!sgetFailed && App.profile.games > 0){
-    sset(profileKey(id), App.profile);     // server lost its data: restore from phone
+    sset(profileKey(id), App.profile);
   }
 }
 function levelInfo(points){
@@ -1760,176 +1966,37 @@ function recordGameToProfile(room){
   if(!me || !me.role) return;
   const gk = room.code + ':' + room.gameId;
   if(p.recorded.includes(gk)) return;
+  const before = ACHIEVEMENTS.filter(a=>a.test(p)).map(a=>a.name);
   const won = room.winner==='mafia' ? me.role==='mafia' : me.role!=='mafia';
   const hasBots = room.players.some(x=>x.isBot);
   const gain = hasBots ? Math.round((me.gain||0)/2) : (me.gain || 0);
   p.games++; if(won) p.wins++; else p.losses++;
   if(me.alive) p.survived++;
+  if(hasBots) p.botGames = (p.botGames||0) + 1;
   p.points += gain; p.bestGame = Math.max(p.bestGame, gain);
   p.streak = won ? p.streak+1 : 0; p.bestStreak = Math.max(p.bestStreak, p.streak);
   const r = p.roles[me.role] || (p.roles[me.role] = {g:0,w:0});
   r.g++; if(won) r.w++;
   const ev = me.ev || {};
   ['find','save','kill','voteMafia'].forEach(k=>{ p.ev[k] = (p.ev[k]||0) + (ev[k]||0); });
-  p.history.unshift({ts:now(), code:room.code, role:me.role, won, gain, alive:!!me.alive, bots:hasBots});
-  p.history = p.history.slice(0,30);
-  p.recorded.unshift(gk); p.recorded = p.recorded.slice(0,60);
-  saveProfile(p);
-}
-function renderHomeProfile(){
-  const p = App.profile; if(!p) return;
-  const lv = levelInfo(p.points);
-  document.getElementById('hp-av').textContent = p.avatar;
-  document.getElementById('hp-name').textContent = p.name || App.me.name || 'Мой профиль';
-  document.getElementById('hp-sub').textContent = `${lv.name} · партий: ${p.games} · побед: ${p.wins}`;
-  document.getElementById('hp-pts').innerHTML = `${p.points}<span>очков</span>`;
-}
-function openProfile(){
-  App.profileReturn = App.screen === 'screen-profile' ? (App.profileReturn || 'screen-home') : App.screen;
-  showScreen('screen-profile');
-  switchProfileTab('profile');
-}
-function switchProfileTab(tab){
-  document.getElementById('tab-profile').classList.toggle('on', tab==='profile');
-  document.getElementById('tab-rating').classList.toggle('on', tab==='rating');
-  document.getElementById('profile-view').style.display = tab==='profile' ? 'block' : 'none';
-  document.getElementById('rating-view').style.display = tab==='rating' ? 'block' : 'none';
-  if(tab==='profile') renderProfile(); else renderRating();
-}
-function renderProfile(){
-  const p = App.profile; if(!p) return;
-  const lv = levelInfo(p.points);
-  const winRate = p.games ? Math.round(p.wins/p.games*100) : 0;
-  const roleRows = ['mafia','detective','doctor','civilian'].map(k=>{
-    const r = p.roles[k] || {g:0,w:0};
-    const pct = r.g ? Math.round(r.w/r.g*100) : 0;
-    const m = ROLE_META[k];
-    return `<div class="role-stat"><div>${m.icon} <b>${m.name}</b></div>
-      <div class="rs-bar"><i style="width:${pct}%"></i></div>
-      <small>${r.g} партий · ${r.w} побед (${pct}%)</small></div>`;
-  }).join('');
-  const ach = ACHIEVEMENTS.map(a=>{
-    const ok = a.test(p);
-    return `<div class="ach ${ok?'':'lock'}"><span class="ai">${a.icon}</span>${a.name}</div>`;
-  }).join('');
-  const hist = p.history.length ? p.history.map(h=>{
-    const m = ROLE_META[h.role] || {name:h.role, icon:''};
-    const d = new Date(h.ts);
-    const dt = d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'}) + ' ' + d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-    return `<div class="hist-row ${h.won?'w':'l'}"><div>${m.icon}</div>
-      <div><b style="color:var(--paper)">${h.won?'Победа':'Поражение'}</b> · ${m.name}${h.alive?' · выжил':''}<small>${dt} · ${h.bots?'🤖 с ботами':'комната '+esc(h.code)}</small></div>
-      <b>+${h.gain}</b></div>`;
-  }).join('') : '<div class="pf-next" style="padding:10px 0;">Пока нет сыгранных партий. Сыграйте первую — результат появится здесь.</div>';
-  document.getElementById('profile-view').innerHTML = `
-    <div class="pf-hero">
-      <div class="pf-av">${p.avatar}</div>
-      <input type="text" id="prof-name" maxlength="18" value="${esc(p.name)}" placeholder="Ваше имя">
-      <div class="pf-level">Уровень ${lv.idx} · ${lv.name}</div>
-      <div class="pf-bar"><i style="width:${lv.pct}%"></i></div>
-      <div class="pf-next">${lv.next ? `Ещё ${lv.next[0]-p.points} очков до уровня «${lv.next[1]}»` : 'Максимальный уровень достигнут!'}</div>
-      <div class="av-pick">${AVATARS.map(a=>`<button data-av="${a}" class="${a===p.avatar?'on':''}">${a}</button>`).join('')}</div>
-    </div>
-    <div class="section-title">Статистика</div>
-    <div class="stat-grid">
-      <div class="stat"><b>${p.points}</b><span>всего очков</span></div>
-      <div class="stat"><b>${p.games}</b><span>партий</span></div>
-      <div class="stat"><b>${p.wins}</b><span>побед</span></div>
-      <div class="stat"><b>${winRate}%</b><span>винрейт</span></div>
-      <div class="stat"><b>${p.survived}</b><span>дожил до конца</span></div>
-      <div class="stat"><b>${p.bestGame}</b><span>рекорд за партию</span></div>
-      <div class="stat"><b>${p.streak}</b><span>побед подряд</span></div>
-      <div class="stat"><b>${p.bestStreak}</b><span>лучшая серия</span></div>
-    </div>
-    <div class="section-title">Способности</div>
-    <div class="stat-grid">
-      <div class="stat"><b>${p.ev.find}</b><span>🔍 нашёл мафию</span></div>
-      <div class="stat"><b>${p.ev.save}</b><span>💉 спас жителей</span></div>
-      <div class="stat"><b>${p.ev.kill}</b><span>🔪 убийств (мафия)</span></div>
-      <div class="stat"><b>${p.ev.voteMafia}</b><span>⚖️ голос против мафии</span></div>
-    </div>
-    <div class="section-title">По ролям</div>
-    ${roleRows}
-    <div class="section-title">Достижения (${ACHIEVEMENTS.filter(a=>a.test(p)).length}/${ACHIEVEMENTS.length})</div>
-    <div class="ach-grid">${ach}</div>
-    <div class="section-title">История партий</div>
-    ${hist}
-    <div class="pf-next" style="margin-top:16px; text-align:center;">Профиль хранится на этом телефоне и копируется на сервер. Если очистить данные браузера, профиль на этом устройстве начнётся заново.</div>`;
-  const nameEl = document.getElementById('prof-name');
-  nameEl.addEventListener('change', async ()=>{
-    const v = nameEl.value.trim().slice(0,18);
-    if(!v){ nameEl.value = App.profile.name; return; }
-    App.profile.name = v;
-    await saveName(v);
-    await saveProfile(App.profile);
-    toast('Имя сохранено');
-  });
-  document.querySelectorAll('#profile-view .av-pick button').forEach(b=>{
-    b.addEventListener('click', async ()=>{
-      App.profile.avatar = b.dataset.av;
-      await saveProfile(App.profile);
-      renderProfile();
-    });
-  });
-}
-async function renderRating(){
-  const box = document.getElementById('rating-view');
-  box.innerHTML = '<div class="pf-next" style="padding:20px; text-align:center;"><span class="spinner"></span> Загружаем рейтинг…</div>';
-  if(App.profile && App.profile.games > 0) await sset(profileKey(App.me.id), App.profile);
-  const keys = (await slist('profile:')).slice(0, 80);
-  const all = (await Promise.all(keys.map(k=>sget(k)))).filter(x=>x && typeof x.points==='number');
-  if(!all.length){
-    box.innerHTML = '<div class="pf-next" style="padding:20px; text-align:center;">Рейтинг пока пуст. Сыграйте партию — и вы появитесь в списке.</div>';
-    return;
+  // who I played with (humans only)
+  room.players.forEach(x=>{ if(!x.isBot && x.id!==me.id){ p.playedWith[x.name] = (p.playedWith[x.name]||0) + 1; } });
+  const names = Object.keys(p.playedWith);
+  if(names.length > 40){
+    names.sort((a,b)=>p.playedWith[a]-p.playedWith[b]);
+    names.slice(0, names.length-40).forEach(n=>{ delete p.playedWith[n]; });
   }
-  all.sort((a,b)=>(b.points-a.points) || ((b.wins||0)-(a.wins||0)) || ((a.games||0)-(b.games||0)));
-  const medals = ['🥇','🥈','🥉'];
-  const myIdx = all.findIndex(x=>x.id===App.me.id);
-  box.innerHTML = `<div class="section-title">Лучшие игроки${myIdx>=0?` · вы на ${myIdx+1}-м месте`:''}</div>` +
-    all.slice(0,30).map((x,i)=>`
-      <div class="rk-row ${x.id===App.me.id?'me':''}">
-        <div class="rk-n">${medals[i]||(i+1)}</div>
-        <div class="rk-av">${esc(x.avatar||'🕵️')}</div>
-        <div><div class="rk-name">${esc(x.name||'Игрок')}</div><small>${levelInfo(x.points).name} · партий ${x.games||0} · побед ${x.wins||0}</small></div>
-        <div class="rk-pts">${x.points}</div>
-      </div>`).join('');
-}
-document.getElementById('home-profile').addEventListener('click', ()=>openProfile());
-document.getElementById('btn-profile-back').addEventListener('click', ()=>{
-  if(history.state && history.state.screen==='screen-profile') history.back();   // popstate handler returns to the previous screen
-  else showScreen(App.profileReturn && App.profileReturn!=='screen-profile' ? App.profileReturn : 'screen-home');
-});
-document.getElementById('tab-profile').addEventListener('click', ()=>switchProfileTab('profile'));
-document.getElementById('tab-rating').addEventListener('click', ()=>switchProfileTab('rating'));
-
-/* ================= boot ================= */
-(async function boot(){
-  await ensureIdentity();
-  await loadProfile();
-  if(App.me.name){
-    document.getElementById('create-name').value = App.me.name;
-    document.getElementById('join-name').value = App.me.name;
-    document.getElementById('bots-name').value = App.me.name;
+  // tournament champion
+  if(room.tour && room.tour.played >= room.tour.total){
+    const top = Object.entries(room.tour.scores).sort((a,b)=>b[1]-a[1])[0];
+    if(top && top[0]===App.me.id && !hasBots) p.tourWins = (p.tourWins||0) + 1;
   }
-})();
-
-})();
-</script>
-<script>
-// PWA: installable app
-if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }); }
-let deferredInstall = null;
-window.addEventListener('beforeinstallprompt', e=>{
-  e.preventDefault(); deferredInstall = e;
-  const b = document.getElementById('btn-install'); if(b) b.style.display = 'block';
-});
-window.addEventListener('appinstalled', ()=>{ const b = document.getElementById('btn-install'); if(b) b.style.display='none'; deferredInstall=null; });
-document.getElementById('btn-install').addEventListener('click', async ()=>{
-  if(!deferredInstall) return;
-  deferredInstall.prompt();
-  await deferredInstall.userChoice;
-  deferredInstall = null;
-  document.getElementById('btn-install').style.display = 'none';
-});
-</script>
-</body>
-</html>
+  const deathLine = room.log.find(e=>e.type==='death' && e.text.includes(me.name));
+  p.history.unshift({
+    ts:now(), code:room.code, role:me.role, won, gain, alive:!!me.alive, bots:hasBots,
+    rounds:room.round, winner:room.winner,
+    died: me.alive ? '' : (deathLine ? deathLine.text.slice(0,140) : ''),
+    players: room.players.map(x=>({n:x.name, r:x.role, a:!!x.alive, me:x.id===me.id}))
+  });
+  p.history = p.history.slice(0,40);
+  p.recorded.unshift(gk); p.recorded = p.recorded.
